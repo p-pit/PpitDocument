@@ -1,0 +1,219 @@
+<?php 
+$spa = $context->isSpaMode();
+$anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
+?>
+
+<!-- Display header on MPA mode -->
+<?php if (!$spa) : ?>
+	<?php 
+		$this->current = 'document';
+		echo $this->partial('/partials/menu'); 
+	?>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+<?php endif;?>
+
+    	<div class="panel panel-default">
+            <div class="panel-heading">
+				<?php echo $this->translate('Documents', 'ppit-core', $context->getLocale()) ?>
+            </div>
+		    <div class="panel-body">
+				<table class="table-condensed">
+					<tr>
+						<td colspan="6">
+<?php for ($i = 0; $i < count($parent->parents); $i++) : ?>
+<?php if ($i == count($parent->parents)-1) : ?>
+				            <strong><?php echo $parent->parents[$i]->name; ?></strong>
+<?php else : ?>
+<?php $p = $parent->parents[$i]; ?>
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'context' => $context,
+									'text' => $p->name,
+									'id' => 'parent-anchor-'.$p->id,
+									'anchorStyle' => $context->getAnchorStyle(),
+									'spa' => $spa,
+							)) ?> >
+<?php endif;?>
+<?php endfor;?>
+						</td>
+					</tr>
+				</table>
+		    	<table class="table table-striped">
+					<tr class="<?php echo $this->cycle(array("even", "odd"))->next();?>">
+						<th class="ppit-th">&nbsp;</th>
+						<th>
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'context' => $context,
+									'text' => $this->translate('Name', 'ppit-contact', $context->getLocale()),
+									'id' => 'name-anchor',
+									'anchorStyle' => $context->getAnchorStyle(),
+									'spa' => $spa,
+							)) ?>
+						</th>
+						<th>
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'context' => $context,
+									'text' => $this->translate('Updated', 'ppit-core', $context->getLocale()),
+									'id' => 'update-time-anchor',
+									'anchorStyle' => $context->getAnchorStyle(),
+									'spa' => $spa,
+							)) ?>
+						</th>
+					</tr>
+					<tr>
+						<td colspan="16">
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'context' => $context,
+									'glyphicon' => 'glyphicon-plus',
+									'title' => $this->translate('Add', 'ppit-core', $context->getLocale()),
+									'id' => 'add-anchor',
+									'anchorStyle' => $context->getAnchorStyle(),
+									'spa' => $spa,
+							)) ?>
+						</td>
+					</tr>
+<?php foreach ($documents as $document) : ?>
+					<tr class="searchable">
+					
+<!-- Detail -->
+						<td>
+	<?php if ($document->type == 'directory' || $document->authorization == 'admin' || $document->authorization == 'write') : ?>
+
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'context' => $context,
+									'glyphicon' => 'glyphicon-zoom-in',
+									'title' => $this->translate('Detail', 'ppit-core', $context->getLocale()),
+									'id' => 'detail-anchor-'.$document->id,
+									'anchorStyle' => $context->getAnchorStyle(),
+									'spa' => $spa,
+									'showForm' => true,
+							)) ?>
+	<?php else : ?>
+							&nbsp;
+	<?php endif;?>
+						</td>
+
+						<td>
+	<?php if ($document->type == 'directory') : ?>
+							<span class="glyphicon glyphicon-folder-open"></span>
+	<?php else : ?>
+							<span class="glyphicon glyphicon-file"></span>
+	<?php endif;?>
+							&nbsp;&nbsp;
+
+	<?php if ($document->type == 'uploaded') : ?>
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'context' => $context,
+									'text' => $document->name,
+									'title' => $this->translate('Download a file', 'ppit-core', $context->getLocale()),
+									'id' => 'uploaded-anchor'.$document->id,
+									'anchorStyle' => 'link',
+									'href' => $this->url('document/download', array('id' => $document->id)),
+							)) ?>
+
+	<?php elseif ($document->type == 'link') : ?>
+							<a target="_blank" href="<?php echo $document->url ?>"><?php echo $document->name ?></a>
+	<?php else : ?>
+							<?php echo $document->name ?>
+	<?php endif;?>
+						</td>
+
+<?php 
+	$creationDate = strtotime($document->update_time);
+	$creationDate = date("d/m/y g:i A", $creationDate);
+?>
+						<td><?php echo $creationDate ?></td>
+
+					</tr>
+<?php endforeach; ?>
+				</table>
+			</div>
+		</div>
+<?php if (!$spa) : ?>
+	</div>
+</div>
+<?php endif;?>
+
+<script id="document_script">
+
+<?php for ($i = 0; $i < count($parent->parents); $i++) : ?>
+	<?php if ($i != count($parent->parents)-1) : ?>
+	<?php $p = $parent->parents[$i]; ?>
+	<?php echo $this->partial('/partials/show-main-script', array(
+					'id' => 'parent-anchor-'.$p->id,
+					'route' => $this->url('document/index', array('parent_id' => $p->id)),
+					'script' =>'document_script',
+					'hideForm' => true,
+					'spa' => $spa,
+			)) ?>
+	<?php endif;?>
+<?php endfor;?>
+
+<?php foreach ($documents as $document) : ?>
+	<?php if ($document->type == 'uploaded') : ?>
+		eval(document.getElementById('uploaded-anchor<?php echo $document->id ?>-script').innerHTML);
+	<?php endif;?>
+<?php endforeach;?>
+
+// Sort on name
+<?php echo $this->partial('/partials/show-main-script', array(
+		'id' => 'name-anchor',
+		'route' => $this->url('document/index', array('parent_id' => $parent_id)).'?major=name'.(($major == 'name' && $dir =='ASC') ? '&dir=DESC' : ''),
+		'script' =>'document_script',
+		'hideForm' => true,
+		'spa' => $spa,
+)) ?>
+
+// Sort on update time
+<?php echo $this->partial('/partials/show-main-script', array(
+		'id' => 'update-time-anchor',
+		'route' => $this->url('document/index', array('parent_id' => $parent_id)).'?major=update_time'.(($major == 'update_time' && $dir =='ASC') ? '&dir=DESC' : ''),
+		'script' =>'document_script',
+		'hideForm' => true,
+		'spa' => $spa,
+)) ?>
+
+<?php if ($spa && $anchorStyle == 'button') : ?>
+	$("#name-anchor-glyphicon").removeClass("glyphicon-triangle-top");
+	$("#name-anchor-glyphicon").removeClass("glyphicon-triangle-bottom");
+	$("#update-time-anchor-glyphicon").removeClass("glyphicon-triangle-top");
+	$("#update-time-anchor-glyphicon").removeClass("glyphicon-triangle-bottom");
+	<?php if (isset($major) && $major == 'name') : ?>
+		<?php if ($dir == 'ASC') : ?>
+			$("#name-anchor-glyphicon").addClass("glyphicon-triangle-top");
+		<?php else : ?>
+			$("#name-anchor-glyphicon").addClass("glyphicon-triangle-bottom");
+		<?php endif;?>
+	<?php elseif (isset($major) && $major == 'update_time') : ?>
+		<?php if ($dir == 'ASC') : ?>
+			$("#update-time-anchor-glyphicon").addClass("glyphicon-triangle-top");
+		<?php else : ?>
+			$("#update-time-anchor-glyphicon").addClass("glyphicon-triangle-bottom");
+		<?php endif;?>
+	<?php endif;?>
+<?php endif;?>
+		
+// Add
+<?php echo $this->partial('/partials/show-form-script', array(
+		'id' => 'add-anchor',
+		'route' => $this->url('document/add', array('parent_id' => $parent_id)),
+		'script' =>'document_update_script',
+		'spa' => $spa,
+)) ?>
+
+<?php foreach ($documents as $document) : ?>
+
+
+	$('#detail-anchor-<?php echo $document->id ?>').click(function () {
+
+	<?php if ($document->type == 'directory') : ?>
+		// Directory
+		currentIndexPanel.reload('<?php echo $this->url('document/index', array('parent_id' => $document->id)) ?>', 'document_script', 'true');
+	<?php endif; ?>
+
+		showForm('<?php echo $this->url('document/update', array('id' => $document->id)) ?>', 'document_update_script');
+	} );
+	
+<?php endforeach;?>
+
+</script>

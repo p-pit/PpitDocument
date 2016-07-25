@@ -1,0 +1,45 @@
+<?php 
+$spa = $context->isSpaMode();
+$anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
+?>
+
+<!-- Display header on MPA mode -->
+<?php if (!$spa) : ?>
+	<?php 
+//		$this->current = 'document';
+		echo $this->partial('/partials/menu'); 
+	?>
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+<?php endif;?>
+
+    	<div class="panel panel-default">
+            <div class="panel-heading">
+				<?php echo $this->translate('Document', 'ppit-core', $context->getLocale()).': '.$this->translate('Approbation request', 'ppit-core', $context->getLocale()) ?>
+            </div>
+		    <div class="panel-body">
+
+<!-- Form header -->
+<?php echo $this->partial('/partials/form-header') ?>
+
+<?php if ($message == 'OK') $isDisabled = true; else $isDisabled = false; ?>
+
+<!-- Contact_id -->
+<?php echo $this->partial('/partials/contact-update.phtml', array('addMode' => !$id, 'message' => $message, 'contact' => $contact, 'vcards' => $vcards, 'config' => $config, 'context' => $context)); ?>
+
+<!-- Form footer -->
+<?php echo $this->partial('/partials/form-footer') ?>
+					</div>
+				</div>
+			</div>
+		</div>
+<?php if (!$spa) : ?>
+	</div>
+</div>
+<?php endif;?>
+
+<script id="document_approbation_request_script">
+
+eval(document.getElementById('contact_update_script').innerHTML);
+
+</script>

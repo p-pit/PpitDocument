@@ -1,0 +1,300 @@
+<?php 
+$spa = $context->isSpaMode();
+$anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
+?>
+
+<!-- Display header on MPA mode -->
+<?php if (!$spa) : ?>
+	<?php 
+		echo $this->partial('/partials/menu'); 
+	?>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+<?php endif;?>
+
+    <div class="panel panel-default">
+            <div class="panel-heading">
+				<?php echo $this->translate('Zoom on a directory or document', 'ppit-core', $context->getLocale());?>
+ 				<div class="btn-group pull-right">
+					<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+							'context' => $context,
+							'glyphicon' => 'glyphicon-remove',
+							'title' => $this->translate('Return to list', 'ppit-core', $context->getLocale()),
+							'id' => 'remove-anchor',
+							'anchorStyle' => $anchorStyle,
+							'spa' => $spa,
+					)) ?>
+ 				</div>
+			</div>
+           	<div class="panel-body">
+				<table class="table-condensed">
+
+					<tr>
+						<td colspan="2">
+
+<?php if ($document->type == 'text content') : ?>
+
+<!-- Print action -->
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'context' => $context,
+									'glyphicon' => 'glyphicon-print',
+									'title' => $this->translate('Print', 'ppit-core', $context->getLocale()),
+									'id' => 'print-anchor',
+									'anchorStyle' => $context->getAnchorStyle(),
+									'spa' => $spa,
+							)) ?>
+
+<?php elseif ($document->type == 'uploaded') : ?>
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'context' => $context,
+									'glyphicon' => 'glyphicon-cloud-download',
+									'title' => $this->translate('Download a file', 'ppit-core', $context->getLocale()),
+									'id' => 'uploaded-anchor',
+									'anchorStyle' => $context->getAnchorStyle(),
+									'spa' => $spa,
+							)) ?>
+<?php endif;?>
+
+<!-- ACL action -->
+<?php if ($document->authorization == 'admin') : ?>
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'context' => $context,
+									'glyphicon' => 'glyphicon-lock',
+									'title' => $this->translate('Update', 'ppit-core', $context->getLocale()),
+									'id' => 'acl-anchor',
+									'anchorStyle' => $context->getAnchorStyle(),
+									'spa' => $spa,
+							)) ?>
+<?php endif;?>
+
+<!-- Delete action -->
+<?php if ($document->authorization == 'write' || $document->authorization == 'admin') : ?>
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'context' => $context,
+									'glyphicon' => 'glyphicon-trash',
+									'title' => $this->translate('Delete', 'ppit-core', $context->getLocale()),
+									'id' => 'delete-anchor',
+									'anchorStyle' => $context->getAnchorStyle(),
+									'spa' => $spa,
+									'disabled' => !$document->isDeletable(),
+							)) ?>
+<?php endif;?>
+						</td>
+					</tr>
+
+<!-- Access path -->
+					<tr>
+						<td class="ppit-header-caption"><?php echo $this->translate('Access path', 'ppit-core', $context->getLocale())?></td>
+						<td>
+<?php for ($i = 0; $i < count($parent->parents); $i++) : ?>
+							<?php if ($i > 0) echo ' > '; ?>
+					        <?php echo $parent->parents[$i]->name; ?></strong>
+<?php endfor;?>
+						</td>
+					</tr>
+				</table>
+
+<?php if ($document->type == 'text content') : ?>
+
+<!-- Case of a text content -->
+				<div id="content"></div>
+
+<?php elseif ($document->type == 'link') : ?>
+
+<!-- Case of a link -->
+				<div><iframe id="content" height="1000"; style="width: 100%; border: none"></iframe></div>
+				
+<?php elseif ($document->type == 'uploaded') : ?>
+				
+<!-- Form header -->
+	<?php echo $this->partial('/partials/form-header', array(
+				'id' => $id,
+				'update_time' => $document->update_time,
+				'message' => $message,
+				'error' => $error,
+				'csrfForm' => $csrfForm,
+				'context' => $context,
+	)) ?>
+
+	<?php if ($message == 'OK') $isDisabled = true; else $isDisabled = false; ?>
+
+<?php else : ?>
+
+<!-- Name -->
+				    <div class="form-group" id="directory_group">
+						<label class="col-sm-5 control-label"><?php echo $this->translate('Name', 'ppit-core', $context->getLocale()) ?></label>
+				    	<div class="col-sm-7">
+							<input name="name" id="name" class="form-control" value="<?php echo $document->name ?>"<?php if ($message == 'OK') echo 'disabled="disabled"' ?>/>
+						</div>
+						<div class="col-sm-12"><p class="help-block" id="name_error"></p></div>
+					</div>
+
+<!-- Form footer -->
+	<?php echo $this->partial('/partials/form-footer', array(
+		'context' => $context,
+		'message' => $message,
+		'target' => 'form_action',
+		'route' => 'document/index',
+		'params' => array('id' => $document->parent_id),
+	)) ?>
+
+<?php endif;?>
+			</div>
+		</div>
+<?php if (!$spa) : ?>
+	</div>
+</div>
+<?php endif;?>
+
+<?php if (!$context->isSpaMode()) echo $this->partial('partials/view-controller') ?>
+
+<script id='document_update_script'>
+
+// Close form
+<?php echo $this->partial('/partials/form-return-script', array(
+		'id' => 'remove-anchor',
+		'route' => $this->url('document/index', array('parent_id' => $document->parent_id)),
+		'spa' => $spa,
+)) ?>
+
+<!-- ACL action -->
+<?php if ($document->authorization == 'admin') : ?>
+	<?php echo $this->partial('/partials/show-form-script', array(
+			'id' => 'acl-anchor',
+			'route' => $this->url('document'), //'link/acl', array('id' => $link->id)),
+			'script' =>'document_acl_script',
+			'spa' => $spa,
+	)) ?>
+<?php endif;?>
+
+<!-- Delete action -->
+<?php if ($document->authorization == 'write' || $document->authorization == 'admin') : ?>
+	<?php echo $this->partial('/partials/show-form-script', array(
+			'id' => 'delete-anchor',
+			'route' => $this->url('document/delete', array('id' => $document->id)),
+			'script' =>'document_delete_script',
+			'spa' => $spa,
+	)) ?>
+<?php endif;?>
+
+<?php if ($document->type == 'link') : ?>
+
+<!-- Case of a link -->
+
+	$('#content').attr('src', '<?php echo $document->url ?>');
+
+<?php elseif ($document->type == 'text content') : ?>
+
+<!-- Case of a text content -->
+
+//Print
+	
+	<?php echo $this->partial('/partials/anchor-script', array(
+			'id' => 'print-anchor',
+			'href' => $this->url('document/pdf', array('id' => $id)),
+			'spa' => $spa,
+	)) ?>
+
+	function updateContent(target, route, script) {
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("GET", route, true);
+		xhttp.onreadystatechange = function() {
+			if (xhttp.readyState == 4 && xhttp.status == 200) {
+	
+	<?php if ($config['ppitCoreSettings']['isTraceActive']) : ?>
+				console.log('updateContent, target = ' + target + ', route = ' + route + ', script = ' + script);
+				console.log(xhttp.responseText);
+	<?php endif;?>
+	
+				document.getElementById(target).innerHTML = xhttp.responseText;
+				eval(document.getElementById(script).innerHTML);
+			}
+		}
+		xhttp.send();
+	}
+	
+	//Format the layout
+	<?php
+	$params = array('id' => $id);
+	$params['target'] = 'content';
+	?>
+	
+	//Display the content
+	updateContent(
+			'<?php echo 'content' ?>',
+			'<?php echo $this->url('document/displayContent', $params) ?>',
+			'content_script_<?php echo $id ?>'
+	);
+
+<?php elseif ($document->type == 'uploaded') : ?>
+
+<!-- Case of an uploaded document -->
+
+		<?php echo $this->partial('/partials/anchor-script', array(
+				'id' => 'uploaded-anchor',
+				'href' => $this->url('document/download', array('id' => $document->id)),
+				'script' => 'document_script',
+				'spa' => $spa,
+		)) ?>
+
+<?php endif;?>
+
+<?php if ($message == 'OK') : ?>
+	
+	<?php echo $this->partial('/partials/form-return-script', array(
+			'id' => 'foot-return-anchor',
+			'route' => $this->url('document/index', array('id' => $document->parent_id)),
+			'spa' => $spa,
+	)) ?>
+
+<?php else : ?>
+	
+	<?php echo $this->partial('/partials/form-return-script', array(
+			'id' => 'cancel-anchor',
+			'route' => $this->url('document/index', array('parent_id' => $document->parent_id)),
+			'spa' => $spa,
+	)) ?>
+	
+	// Submit
+	<?php 
+	$properties = array('name' => 'input', 'update_time' => 'hidden');
+	if (!$id) {
+		$properties['name'] = 'file';
+	}
+	echo $this->partial('/partials/form-button-script', array(
+			'context' => $context,
+			'id' => 'submit-button',
+			'checkFunction' => 'checkForm',
+			'formRoute' => $this->url('document/update', array('id' => $document->id)),
+			'formScript' =>'document_update_script',
+			'properties' => $properties,
+			'mainRoute' => $this->url('document/index', array('parent_id' => $document->parent_id)),
+			'mainScript' =>'document_script',
+			'hideForm' => false,
+	)) ?>
+
+<?php endif;?>
+
+//The elements are checked last to first so the focus is positionned on the first element on error
+function checkForm() 
+{
+	var validity = true;
+
+	// Name
+	name = document.getElementById("name").value;
+	if (name == '') {
+	 	renderElement("name", "<?php echo $this->translate('Please input a value', 'ppit-core', $context->getLocale()) ?>");
+ 		validity = false;
+	}
+	else if (name.length > 255) {
+	 	renderElement("name", "<?php echo $this->translate('The input is too long', 'ppit-core', $context->getLocale()) ?>");
+ 		validity = false;
+ 	}
+ 	else {
+ 		renderElement("name", null);
+	}
+
+	return validity;
+}
+
+</script>

@@ -1,0 +1,72 @@
+
+<!-- Form opening tag -->
+	<form action="" id="document_update_part_form" method="post" class="form-horizontal" enctype="multipart/form-data">
+		<input type="hidden" id="document_update_part_action" name="document_update_part_action" />
+	
+<!--  CSRF -->
+<?php $element = $csrfForm->get('csrf') ?>
+		<div class="form-group">
+			<?php echo $this->formElement($element) ?>
+<?php if ($this->formElementErrors($element)) : ?>
+			<div class="col-sm-12"><p class="help-block"><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLocale()) ?></p></div>
+<?php endif;?>
+		</div>
+
+<?php echo $this->partial('/partials/update-part.phtml') ?>
+
+	</form>
+
+</div>
+	
+<script id='content_part_script_<?php echo $id ?>'>
+
+function contentPostPart(params) {
+	var route = '<?php echo $this->url('document/updatePart', array('id' => $id)) ?>';
+	var scriptName = 'content_part_script_<?php echo $id ?>';
+	var xhttp = new XMLHttpRequest();
+
+	xhttp.onreadystatechange = function() {
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById(target).innerHTML = xhttp.responseText;
+			eval(document.getElementById("document_part_<?php echo $id ?>").innerHTML);
+		}
+	}
+	xhttp.open('POST', route, true);
+	xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	xhttp.send(params);
+<?php if ($config['ppitCoreSettings']['isTraceActive']) : ?>
+	console.log('post, route = ' + route + ', scriptName = ' + scriptName + ', target = ' + "document_part_<?php echo $id ?>" + ', params = ' + params);
+	console.log(xhttp.responseText);
+<?php endif;?>
+}
+
+<?php $properties = array() ?>
+
+function changeRequested () {
+	// Mask all the edit and trash buttons
+		$('#edit_button_<?php echo $id ?>').hide();
+		$('#undo_button_<?php echo $id ?>').hide();
+		$('#redo_button_<?php echo $id ?>').hide();
+		$('#save_button_<?php echo $id ?>').show();
+		$('#cancel_button_<?php echo $id ?>').show();
+}
+
+// Save button
+<?php
+$params = array('id' => $id);
+echo $this->partial('/partials/form-button-script', array(
+		'context' => $context,
+		'formId' => 'document_update_part_form',
+		'id' => 'save_button_'.$id,
+		'target' => 'document_part_'.$id,
+		'formRoute' => $this->url('document/updatePart', $params),
+		'formScript' =>'content_part_script_'.$id,
+		'properties' => $properties,
+)) ?>
+
+// Cancel button
+$("#cancel_button_<?php echo $id ?>").click(function () {
+	$('#document_update_part_action').val('cancel');
+} );
+
+</script>

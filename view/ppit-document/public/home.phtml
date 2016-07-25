@@ -1,0 +1,128 @@
+<?php
+$title = $homeSpecs['title'][$context->getLocale()];
+$this->headTitle($title);
+echo $context->getHeaderCode();
+?>
+<div>&nbsp;</div>
+
+<!-- Contact us -->
+<div id="contact_us" style="text-align: right">
+<?php foreach ($homeSpecs['contactUs'] as $menuItem) : ?>
+	<button type="button" class="btn btn-primary" title="<?php echo $menuItem['title'][$context->getLocale()] ?>" onClick="location_href('<?php echo $menuItem['href'] ?>')">
+		<?php if (isset($menuItem['glyphicon'])) : ?>
+		<span class="glyphicon glyphicon-<?php echo $menuItem['glyphicon'] ?>"></span>&nbsp;
+		<?php endif;?>
+		<?php if (isset($menuItem['text'])) : ?>
+		<?php echo $menuItem['text'][$context->getLocale()] ?>
+		<?php endif;?>
+	</button>
+&nbsp;&nbsp;
+<?php endforeach;?>
+</div>
+<div>&nbsp;</div>
+
+<!-- Jumbotron -->
+<div id="jumbotron" class="jumbotron">
+
+<!-- Display the document -->
+
+<?php for ($i = 0; $i < count($documents['jumbotron']->parts); $i++) : ?>
+	<?php $documentPart = $documents['jumbotron']->parts[$i]; ?>
+
+					<div id="document_part_panel_<?php echo $documentPart->id ?>">
+	
+	<?php if ($documentPart->image) : ?>
+						<div align="center">
+							<img 
+							<?php foreach ($documentPart->image as $attr => $value) : ?>
+								<?php if ($attr == 'src') : ?>
+								src="<?php echo $this->basePath($value) ?>"
+								<?php else : ?>
+								<?php echo $attr ?>="<?php echo $value ?>"
+								<?php endif;?>
+							<?php endforeach;?>
+							/>
+						</div>
+	<?php endif;?>
+			
+						<div><?php echo $documentPart->content ?></div>
+<?php endfor;?>
+					</div>
+</div>
+
+<!-- Front products -->
+<div class="row">
+
+    <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-default">
+
+			<div id="myCarousel" class="carousel slide" data-ride="carousel">
+				<!-- Indicators -->
+				<ol class="carousel-indicators">
+
+<?php $first = true; foreach ($homeSpecs['frontProducts'] as $frontProductId => $frontProduct) : ?>
+					<li data-target="#myCarousel" data-slide-to="<?php echo $frontProductId ?>" <?php if ($first) echo 'class="active"' ?>></li>
+<?php $first = false; endforeach; ?>
+
+				</ol>
+			
+			<!-- Wrapper for slides -->
+				<div class="carousel-inner" role="listbox">
+
+<?php $first = true; foreach ($homeSpecs['frontProducts'] as $frontProductId => $frontProduct) : ?>
+	<?php $document = $documents['frontProducts'][$frontProductId] ?>
+					<div class="item <?php if ($first) echo 'active' ?>">
+						<div class="panel-heading front-page">
+				        	<div><?php echo $document->properties['title'] ?></div>
+				        </div>
+				        <div class="panel-body">
+				    		<div id="front_product_<?php echo $frontProductId ?>">
+	
+	<?php if ($document->image) : ?>
+									<div align="center">
+										<img 
+										<?php foreach ($document->image as $attr => $value) : ?>
+											<?php if ($attr == 'src') : ?>
+											src="<?php echo $this->basePath($value) ?>"
+											<?php else : ?>
+											<?php echo $attr ?>="<?php echo $value ?>"
+											<?php endif;?>
+										<?php endforeach;?>
+										/>
+									</div>
+	<?php endif;?>
+			
+									<div><?php echo $document->summary ?></div>
+									<div style="text-align: center"><a href="<?php echo $this->url('public/displayPage', array('directory' => $frontProduct['directory'], 'name' => $frontProduct['name'])) ?>">En savoir plus...</a></div>
+							</div>
+				        </div>
+						<div class="panel-heading front-page"><br><br>
+				        </div>
+				    </div>
+<?php $first = false; endforeach; ?>
+
+				</div>
+
+				<!-- Left and right controls -->
+				<a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+					<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+					<span class="sr-only">Previous</span>
+				</a>
+				<a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+					<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+					<span class="sr-only">Next</span>
+				</a>
+			</div>
+        </div>
+    </div>
+</div>
+<div>&nbsp;</div>
+<div><a href="<?php echo $this->url('public/displayPage', array('directory' => $homeSpecs['blog']['directory'], 'name' => $homeSpecs['blog']['name'])) ?>">Blog</a></div>
+<div><a href="<?php echo $this->url('public/displayPage', array('directory' => $homeSpecs['legalNotices']['directory'], 'name' => $homeSpecs['legalNotices']['name'])) ?>">Mentions légales</a></div>
+
+<script>
+
+function location_href(target) { document.location.href=target; }
+function location_hash(target) { document.location.hash=target; }
+
+</script>

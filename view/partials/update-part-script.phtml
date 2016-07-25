@@ -1,0 +1,38 @@
+
+CKEDITOR.replace( 'editor_<?php echo $documentPart->id ?>' );
+
+$('#editor_part_<?php echo $documentPart->id ?>').hide();
+
+$('#edit_button_<?php echo $documentPart->id ?>').click(function () {
+	$('#document_update_action').val('update');
+	$('#part_to_update').val('<?php echo $documentPart->id ?>');
+	changeRequested();
+	$('#part_save_button_<?php echo $documentPart->id ?>').show();
+	$('#part_cancel_button_<?php echo $documentPart->id ?>').show();
+	$('#content_part_<?php echo $documentPart->id ?>').hide();
+	$('#editor_part_<?php echo $documentPart->id ?>').show();
+<?php 
+$properties['editor_'.$documentPart->id] = 'ckeditor'; 
+?>
+});
+
+<?php if ($documentPart->saved_content && !$documentPart->is_undone) : ?>
+	$('#undo_button_<?php echo $documentPart->id ?>').click(function () {
+	$('#document_update_action').val('undo');
+	changeRequested();
+	$('#part_save_button_<?php echo $documentPart->id ?>').show();
+	$('#part_cancel_button_<?php echo $documentPart->id ?>').show();
+});
+<?php endif;?>
+
+<?php if ($documentPart->is_undone) : ?>
+	$('#redo_button_<?php echo $documentPart->id ?>').click(function () {
+	$('#document_update_action').val('redo');
+	changeRequested();
+	$('#part_save_button_<?php echo $documentPart->id ?>').show();
+	$('#part_cancel_button_<?php echo $documentPart->id ?>').show();
+});
+<?php endif;?>
+
+$('#part_save_button_<?php echo $documentPart->id ?>').hide();
+$('#part_cancel_button_<?php echo $documentPart->id ?>').hide();

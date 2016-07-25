@@ -1,0 +1,75 @@
+<?php 
+$spa = $context->isSpaMode();
+$anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
+?>
+
+<div id="document_part_<?php echo $document_part_id ?>">
+
+<!-- Display header on MPA mode -->
+<?php if (!$spa) : ?>
+	<script src="<?php echo $this->basePath("ckeditor/ckeditor.js") ?>"></script>
+<?php endif;?>
+
+<!-- Display the part -->
+
+	<?php if ($context->isAuthenticated() && !$document->lock) : ?>
+
+<div class="panel panel-default">
+	<div class="panel-body">
+	
+<!-- Edit button -->
+<button type="button" class="btn btn-danger" title="<?php echo $this->translate('Edit', 'ppit-core', $context->getLocale()) ?>" id="edit_button_<?php echo $document_part_id ?>">
+	<span class="glyphicon <?php echo 'glyphicon-edit' ?>"></span>
+</button>
+
+<!-- Undo button -->
+<button type="button" class="btn btn-danger<?php if (!$documentPart->saved_content || $documentPart->is_undone) echo ' disabled'?>" title="<?php echo $this->translate('Undo', 'ppit-core', $context->getLocale()) ?>" id="undo_button_<?php echo $document_part_id ?>">
+	<span class="glyphicon <?php echo 'glyphicon-arrow-left' ?>"></span>
+</button>
+
+<!-- Redo button -->
+<button type="button" class="btn btn-danger<?php if (!$documentPart->is_undone) echo ' disabled'?>" title="<?php echo $this->translate('Redo', 'ppit-core', $context->getLocale()) ?>" id="redo_button_<?php echo $document_part_id ?>">
+	<span class="glyphicon <?php echo 'glyphicon-arrow-right' ?>"></span>
+</button>
+
+<!-- Save -->
+<button type="submit" class="btn btn-danger" title="<?php echo $this->translate('Save', 'ppit-core', $context->getLocale()) ?>" id="part_save_button_<?php echo $document_part_id ?>">
+	<span class="glyphicon glyphicon-ok-sign"></span>
+</button>
+
+<!-- Cancel -->
+<button class="btn btn-default" title="<?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>" id="part_cancel_button_<?php echo $document_part_id ?>">
+	<span class="glyphicon glyphicon-remove-sign"></span>
+</button>
+	<?php endif;?>
+
+	<?php if ($documentPart->image) : ?>
+		<div align="center">
+			<img 
+			<?php foreach ($documentPart->image as $attr => $value) : ?>
+				<?php if ($attr == 'src') : ?>
+				src="<?php echo $this->basePath($value) ?>"
+				<?php else : ?>
+				<?php echo $attr ?>="<?php echo $value ?>"
+				<?php endif;?>
+			<?php endforeach;?>
+			/>
+		</div>
+	<?php endif;?>
+
+		<div id="content_part_<?php echo $document_part_id ?>"><?php echo $documentPart->content ?></div>
+
+		<div id="editor_part_<?php echo $document_part_id ?>" class="form-group">
+			<textarea name="editor_<?php echo $document_part_id ?>" id="editor_<?php echo $document_part_id ?>" rows="10"><?php echo $documentPart->content; ?></textarea>
+		</div>
+
+		<script id="check_editor_<?php echo $document_part_id ?>_script">
+		function check_editor_<?php echo $document_part_id ?>() { return true; }
+		</script>
+
+	<?php if (!$document->lock) : ?>
+			</div>
+		</div>
+	<?php endif;?>
+
+</div>

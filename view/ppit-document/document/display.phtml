@@ -1,0 +1,135 @@
+<?php 
+$spa = $context->isSpaMode();
+$anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
+?>
+
+<!-- Display header on MPA mode -->
+<?php if (!$spa) : ?>
+	<?php 
+//		$this->current = 'document';
+		echo $this->partial('/partials/menu'); 
+	?>
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+<?php endif;?>
+
+    	<div class="panel panel-default">
+            <div class="panel-heading">
+				<?php echo $this->translate('Document', 'ppit-core', $context->getLocale()) ?>: <?php echo $document->properties['identifier'] ?>
+ 				<div class="btn-group pull-right">
+					<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+							'glyphicon' => 'glyphicon-remove',
+							'title' => $this->translate('Return', 'ppit-core', $context->getLocale()),
+							'id' => 'remove-anchor',
+							'anchorStyle' => $anchorStyle,
+							'spa' => $spa,
+					)) ?>
+				</div>
+			</div>
+		    <div class="panel-body">
+				<table class="table-condensed">
+					<tr>
+						<td colspan="2">
+<!-- Print -->
+							<?php echo $this->partial('/partials/anchor-widget.phtml', array(
+									'glyphicon' => 'glyphicon-print',
+									'title' => $this->translate('Print', 'ppit-core', $context->getLocale()),
+									'id' => 'print-anchor',
+									'anchorStyle' => $context->getAnchorStyle(),
+									'spa' => $spa,
+							)) ?>
+						</td>
+					</tr>
+				</table>
+
+<!-- Display the audit -->
+				
+				<div class="panel panel-default">
+		            <div class="panel-heading">
+						<strong><?php echo $this->translate($this->translate('Online visas', 'ppit-core', $context->getLocale()));?></strong>
+		            </div>
+					<div class="panel-body">
+<?php foreach ($document->audit as $comment) : ?>
+						<div class="row">
+							<div class="col-md-12">
+								<strong><?php echo $context->decodeDate(substr($comment->time, 0, 10)).substr($comment->time, 10) ?>:</strong>&nbsp;
+								<?php echo $this->translate($comment->status, 'ppit-core', $context->getLocale()) ?>&nbsp;
+								(<?php echo $comment->n_fn ?>)
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-2" align="right">&nbsp;</div>
+							<div class="col-md-10">
+								<em><?php echo $comment->comment ?></em></div>
+						</div>
+<?php endforeach;?>
+					</div>
+				</div>
+
+<!-- Display the document -->
+				<div id="content"></div>
+<?php //foreach ($document->parts as $part) : ?>
+				<?php //echo $part->content; ?>
+<?php //endforeach;?>
+			</div>
+		</div>
+<?php if (!$spa) : ?>
+	</div>
+</div>
+<?php endif;?>
+
+<script id="document_display_script">
+
+function updateContent(target, route, script) {
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("GET", route, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+<?php if ($config['ppitCoreSettings']['isTraceActive']) : ?>
+			console.log('updateContent, target = ' + target + ', route = ' + route + ', script = ' + script);
+			console.log(xhttp.responseText);
+<?php endif;?>
+
+			document.getElementById(target).innerHTML = xhttp.responseText;
+			eval(document.getElementById(script).innerHTML);
+		}
+	}
+	xhttp.send();
+}
+
+// Format the layout
+<?php
+$params = array('id' => $id);
+$params['target'] = 'content';
+?>
+
+// Display the content
+updateContent(
+		'<?php echo 'content' ?>',
+		'<?php echo $this->url('document/displayContent', $params) ?>',
+		'content_script_<?php echo $id ?>'
+);
+
+// Close form
+<?php echo $this->partial('/partials/form-return-script', array(
+		'id' => 'remove-anchor',
+		'route' => $this->url('document/index', array('parent_id' => $document->parent_id)),
+		'spa' => $spa,
+)) ?>
+
+<?php echo $this->partial('/partials/form-return-script', array(
+		'id' => 'return-anchor',
+		'route' => $this->url('document/index', array('parent_id' => $document->parent_id)),
+		'spa' => $spa,
+)) ?>
+
+// Print
+
+<?php echo $this->partial('/partials/anchor-script', array(
+		'id' => 'print-anchor',
+		'href' => $this->url('document/pdf', array('id' => $id)),
+		'spa' => $spa,
+)) ?>
+
+</script>

@@ -1,0 +1,247 @@
+<?php 
+$spa = $context->isSpaMode();
+$anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
+?>
+
+<!-- Display header on MPA mode -->
+<?php if (!$spa) : ?>
+	<script src="<?php echo $this->basePath("ckeditor/ckeditor.js") ?>"></script>
+<?php endif;?>
+
+<!-- Form opening tag -->
+	<form action="" id="document_update_form" method="post" class="form-horizontal" enctype="multipart/form-data">
+
+		<input type="hidden" id="document_update_action" name="document_update_action" />
+		<input type="hidden" id="part_to_update" name="part_to_update" />
+		<input type="hidden" id="part_to_delete" name="part_to_delete" />
+		<input type="hidden" id="part_to_move" name="part_to_move" />
+		<input type="hidden" id="part_receiving" name="part_receiving" />
+		
+<!--  CSRF -->
+<?php $element = $csrfForm->get('csrf') ?>
+				    <div class="form-group">
+						<?php echo $this->formElement($element) ?>
+<?php if ($this->formElementErrors($element)) : ?>
+						<div class="col-sm-12"><p class="help-block"><?php echo $this->translate('The form has expired, please input again', 'ppit-core', $context->getLocale()) ?></p></div>
+<?php endif;?>
+					</div>
+
+<!-- Display the document -->
+
+<?php for ($i = 0; $i < count($document->parts); $i++) : ?>
+	<?php $documentPart = $document->parts[$i]; ?>
+	<?php if ($context->isAuthenticated() && !$document->lock) : ?>
+	
+<!-- Sort button -->
+<button type="button" class="btn btn-danger" title="<?php echo $this->translate('Move', 'ppit-core', $context->getLocale()) ?>" id="move_button_<?php echo $documentPart->id ?>">
+	<span class="glyphicon <?php echo 'glyphicon-sort' ?>"></span>
+</button>
+	
+<!-- Delete button -->
+<button type="button" class="btn btn-danger" title="<?php echo $this->translate('Delete', 'ppit-core', $context->getLocale()) ?>" id="delete_button_<?php echo $documentPart->id ?>">
+	<span class="glyphicon <?php echo 'glyphicon-trash' ?>"></span>
+</button>
+	<?php endif;?>
+
+	<div id="document_part_panel_<?php echo $documentPart->id ?>">
+	
+	<?php echo $this->partial('partials/update-part.phtml', array(
+			'context' => $context,
+			'config' => $context->getconfig(),
+			'documentPart' => $documentPart,
+			'document' => $document,
+			'document_part_id' => $documentPart->id,
+			'message' => $message,
+			'error' => $error,
+			'csrfForm' => $csrfForm,
+	)) ?>
+
+<?php endfor;?>
+
+<?php if ($context->isAuthenticated() && !$document->lock) : ?>
+<!-- Part to add -->
+<button type="button" class="btn btn-danger" title="<?php echo $this->translate('Edit', 'ppit-core', $context->getLocale()) ?>" id="add_button_<?php echo $document->id ?>">
+	<span class="glyphicon <?php echo 'glyphicon-plus' ?>"></span>
+</button>
+
+<div id="editor_part_<?php echo $document->id ?>" class="form-group">
+		<textarea name="editor_<?php echo $document->id ?>" id="editor_<?php echo $document->id ?>" rows="10"></textarea>
+</div>
+
+<script id="check_editor_<?php echo $document->id ?>_script">
+function check_editor_<?php echo $document->id ?>() { return true; }
+</script>
+
+<!-- Save -->
+<button type="submit" class="btn btn-danger" title="<?php echo $this->translate('Save', 'ppit-core', $context->getLocale()) ?>" id="save_button_<?php echo $document->id ?>">
+	<span class="glyphicon glyphicon-ok-sign"></span>
+</button>
+
+<!-- Cancel -->
+<button class="btn btn-default" title="<?php echo $this->translate('Cancel', 'ppit-core', $context->getLocale()) ?>" id="cancel_button_<?php echo $document->id ?>">
+	<span class="glyphicon glyphicon-remove-sign"></span>
+</button>
+<?php endif;?>
+
+<?php if (!$this->spa) : ?>
+				</form>
+<?php endif;?>
+
+<script id='content_script_<?php echo $document->id ?>'>
+
+function contentPost(params) {
+	var route = '<?php echo $this->url('document/displayContent', array('id' => $document->id, 'target' => $target)) ?>';
+	var scriptName = '<?php echo 'content_script_'.$document->id ?>';
+	var target = '<?php echo $target ?>';
+	var xhttp = new XMLHttpRequest();
+
+	xhttp.onreadystatechange = function() {
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			document.getElementById(target).innerHTML = xhttp.responseText;
+			eval(document.getElementById(scriptName).innerHTML);
+		}
+	}
+	xhttp.open('POST', route, true);
+	xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	xhttp.send(params);
+<?php if ($config['ppitCoreSettings']['isTraceActive']) : ?>
+	console.log('post, route = ' + route + ', scriptName = ' + scriptName + ', target = ' + target + ', params = ' + params);
+	console.log(xhttp.responseText);
+<?php endif;?>
+}
+
+<?php $properties = array() ?>
+
+function changeRequested () {
+	// Mask all the edit and trash buttons
+<?php foreach ($document->parts as $documentPart) : ?>
+	$('#move_button_<?php echo $documentPart->id ?>').hide();
+	$('#delete_button_<?php echo $documentPart->id ?>').hide();
+	$('#edit_button_<?php echo $documentPart->id ?>').hide();
+	$('#undo_button_<?php echo $documentPart->id ?>').hide();
+	$('#redo_button_<?php echo $documentPart->id ?>').hide();
+<?php endforeach;?>
+	$('#add_button_<?php echo $document->id ?>').hide();
+}
+
+<?php foreach ($document->parts as $documentPart) : ?>
+
+	// Drag & drop
+	$('#move_button_<?php echo $documentPart->id ?>').draggable({
+	    cancel : '.no-drag',
+		snap: true,
+		revert: true	
+	});
+
+	$('#move_button_<?php echo $documentPart->id ?>').droppable({
+		drop : function(ev, ui) {
+			var part_to_move = ui.draggable.attr('id').substr(ui.draggable.attr('id').lastIndexOf('_') + 1);
+			var params = 'csrf=' + document.getElementById('csrf').value + '&action=move' + '&part_to_move=' + part_to_move + '&part_receiving=<?php echo $documentPart->id ?>';
+			$('#document_update_action').val('move');
+			$('#part_to_move').val(part_to_move);
+			$('#part_receiving').val('<?php echo $documentPart->id ?>');
+			<?php
+				$properties = array(
+						'document_update_action' => 'hidden',
+						'part_to_move' => 'hidden',
+						'part_receiving' => 'hidden',
+				);
+				echo $this->partial('/partials/form-button-script', array(
+						'context' => $context,
+						'formId' => 'document_update_form',
+						'id' => 'part_save_button_'.$documentPart->id,
+						'target' => $target,
+						'formRoute' => $this->url('document/displayContent', array('id' => $document->id, 'target' => $target)),
+						'formScript' =>'content_script_'.$document->id,
+						'properties' => $properties,
+			)) ?>
+		}
+	});
+
+	$('#delete_button_<?php echo $documentPart->id ?>').click(function () {
+		changeRequested();
+		$('#content_part_<?php echo $documentPart->id ?>').hide();
+		$('#save_button_<?php echo $document->id ?>').show();
+		$('#cancel_button_<?php echo $document->id ?>').show();
+		$('#document_update_action').val('delete');
+		$('#part_to_delete').val('<?php echo $documentPart->id ?>');
+	});
+
+	<?php echo $this->partial('partials/update-part-script', array('documentPart' => $documentPart)) ?>
+	
+	$('#part_save_button_<?php echo $documentPart->id ?>').hide();
+	$('#part_cancel_button_<?php echo $documentPart->id ?>').hide();
+
+	// Save button
+	<?php
+	$properties = array(
+			'document_update_action' => 'hidden',
+			'part_to_update' => 'hidden',
+	);
+	echo $this->partial('/partials/form-button-script', array(
+			'context' => $context,
+			'formId' => 'document_update_form',
+			'id' => 'part_save_button_'.$documentPart->id,
+			'target' => $target,
+			'formRoute' => $this->url('document/displayContent', array('id' => $document->id, 'target' => $target)),
+			'formScript' =>'content_script_'.$document->id,
+			'properties' => $properties,
+	)) ?>
+
+	// Cancel button
+	$("#part_cancel_button_<?php echo $documentPart->id ?>").click(function () {
+		$('#document_update_action').val('cancel');
+		<?php
+		$properties = array(
+				'document_update_action' => 'hidden',
+				'part_to_update' => 'hidden',
+		);
+		echo $this->partial('/partials/form-button-script', array(
+				'context' => $context,
+				'formId' => 'document_update_form',
+				'id' => 'part_save_button_'.$documentPart->id,
+				'target' => $target,
+				'formRoute' => $this->url('document/displayContent', array('id' => $document->id, 'target' => $target)),
+				'formScript' =>'content_script_'.$document->id,
+				'properties' => $properties,
+		)) ?>
+	} );
+	
+<?php endforeach;?>
+
+// Part to add
+<?php $properties['editor_'.$document->id] = 'ckeditor'; ?>
+CKEDITOR.replace( 'editor_<?php echo $document->id ?>' );
+$('#editor_part_<?php echo $document->id ?>').hide();
+$('#add_button_<?php echo $document->id ?>').click(function () {
+	changeRequested();
+	$('#editor_part_<?php echo $document->id ?>').show();
+});
+
+$('#save_button_<?php echo $document->id ?>').hide();
+$('#cancel_button_<?php echo $document->id ?>').hide();
+
+// Save button
+	<?php
+	$properties = array(
+			'id' => $document->id,
+			'target' => $target,
+			'document_update_action' => 'hidden',
+			'part_to_delete' => 'hidden',
+	);
+	echo $this->partial('/partials/form-button-script', array(
+			'context' => $context,
+			'formId' => 'document_update_form',
+			'id' => 'part_save_button_'.$documentPart->id,
+			'target' => $target,
+			'formRoute' => $this->url('document/displayContent', array('id' => $document->id, 'target' => $target)),
+			'formScript' =>'content_script_'.$document->id,
+			'properties' => $properties,
+	)) ?>
+
+// Cancel button
+$("#cancel_button_<?php echo $document->id ?>").click(function () {
+	$('#document_update_action').val('cancel');
+} );
+
+</script>
