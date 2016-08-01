@@ -1,3 +1,6 @@
+<!-- Load the common form javascript functions -->
+<?php echo $this->partial('/partials/common-form-js.phtml'); ?>
+
 <?php
 $title = $document->properties['title'];
 $this->headTitle($title);
@@ -14,16 +17,6 @@ echo $context->getHeaderCode();
                 <div id="front_product_1_title"><?php if (array_key_exists('date',$document->properties)) echo $context->decodeDate($document->properties['date']).': ' ?><?php echo $document->properties['title'] ?></div>
             </div>
             <div class="panel-body">
-<?php if (array_key_exists('action', $content)) : ?>
-				<button type="button" class="btn btn-primary" title="<?php echo $content['action']['text'] ?>" onClick="location_href('<?php echo $content['action']['href'] ?>')">
-					<?php if (isset($content['action']['glyphicon'])) : ?>
-					<span class="glyphicon glyphicon-<?php echo $content['action']['glyphicon'] ?>"></span>&nbsp;
-					<?php endif;?>
-					<?php if (isset($content['action']['text'])) : ?>
-					<?php echo $content['action']['text'] ?>
-					<?php endif;?>
-				</button>
-<?php endif ?>
        			<div id="front_product_1">
 
 <!-- Display the document -->
@@ -50,6 +43,25 @@ echo $context->getHeaderCode();
 						<div><?php echo $documentPart->content ?></div>
 <?php endfor;?>
 					</div>
+<?php if (array_key_exists('actions', $content)) : ?>
+					<div style="text-align: center">
+	<?php foreach ($content['actions'] as $actionId => $action) : ?>
+		<?php $href = $action['href'] ?>
+		<?php if ($href['type'] == 'url') : ?> 
+						<button type="button" class="btn btn-default action-btn" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="<?php echo ($href['type'] == 'url') ? 'location_href' : 'showForm' ?>('<?php echo $actionId ?>', '<?php echo $href['value'] ?>')">
+		<?php elseif ($href['type'] == 'route') : ?>
+						<button type="button" class="btn btn-default action-btn" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="<?php echo ($href['type'] == 'url') ? 'location_href' : 'showForm' ?>('<?php echo $actionId ?>', '<?php echo $this->url($href['value'], $href['params'], $href['urlParams']) ?>')">
+		<?php endif;?>
+							<?php if (isset($action['glyphicon'])) : ?>
+							<span class="glyphicon glyphicon-<?php echo $action['glyphicon'] ?>"></span>&nbsp;
+							<?php endif;?>
+							<?php echo $action['labels'][$context->getLocale()] ?>
+						</button>
+	<?php endforeach ?>
+					</div>
+<?php endif;?>
+					<div>&nbsp;</div>
+					<div>&nbsp;</div>
 				</div>
 				<div style="text-align: center">
 					<script>(function(d, s, id) {
@@ -77,9 +89,130 @@ echo $context->getHeaderCode();
              </div>
         </div>
 	</div>
+
+    <div class="col-md-6 col-md-offset-3" id="form_action">
+     </div>
 </div>
 
 <script>
-function location_href(target) { document.location.href=target; }
-function location_hash(target) { document.location.hash=target; }
+
+$('#form_action').hide();
+
+function location_href(button, target) { 
+	$('#form_action').hide();
+
+	// Highlight the clicked button (and only it in its class)
+	$('.action-btn').removeClass("btn-primary").addClass("btn-default");
+	$('#' + button).removeClass("btn-default").addClass("btn-primary");
+
+	document.location.href=target; 
+}
+
+function showForm(button, target) {
+
+	// Highlight the clicked button (and only it in its class)
+	$('.action-btn').removeClass("btn-primary").addClass("btn-default");
+	$('#' + button).removeClass("btn-default").addClass("btn-primary");
+
+	$('#form_action').show();
+	$(location).attr('hash', 'form_action');
+	
+	var xhttp = new XMLHttpRequest();
+	xhttp.open('GET', target, true);
+	xhttp.onreadystatechange = function() {
+		if (xhttp.readyState == 4 <?php if (!$config['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+			document.getElementById('form_action').innerHTML = xhttp.responseText;
+<?php if ($config['ppitCoreSettings']['isTraceActive']) : ?>
+			console.log('form_action, route = ' + target);
+			console.log(xhttp.responseText);
+<?php endif;?>
+
+			$('#remove-anchor').click(function() { 
+				$('#form_action').hide(); 
+				$('.action-btn').removeClass("btn-primary").addClass("btn-default");
+			});
+
+			connectAccountRegisterForm();
+		}
+	}
+	xhttp.send();
+}
+
+<?php 
+$properties = array();
+
+foreach ($context->getConfig('commitmentAccount/register') as $propertyId => $options) {
+	$property = $context->getConfig('commitmentAccount')['properties'][$propertyId];
+	$properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $options['mandatory'], 'maxSize' => ($property['type'] == 'textarea') ? 2047 : 255);
+}
+$properties['update_time'] = array('type' => 'hidden');
+
+echo $this->partial('/partials/check-update-properties', array('entity' => 'Account', 'context' => $context, 'properties' => $properties)) 
+?>
+
+function connectAccountRegisterForm()
+{
+<?php foreach ($properties as $propertyId => $property) : ?>
+	<?php if ($property['type'] == 'date') : ?>
+	$('#input_<?php echo $propertyId ?>').datepicker();
+	<?php endif;?>
+<?php endforeach ?>
+
+	var form = document.getElementById('ppit-form');
+	form.onsubmit = function(event) {
+
+		event.preventDefault();
+
+// Check validity
+		var validity = checkAccountUpdateProperties();
+
+		if (validity) {
+
+// Create a new FormData object.
+			var formData = new FormData();
+
+// Get the properties values
+<?php foreach ($properties as $propertyId => $property) : ?>
+
+	<?php if ($property['type'] == 'input' || $property['type'] == 'date' || $property['type'] == 'textarea' || $property['type'] == 'select' || $property['type'] == 'number' || $property['type'] == 'email' || $property['type'] == 'phone' || $property['type'] == 'hidden') : ?>
+			formData.append('<?php echo $propertyId ?>', document.getElementById('<?php echo $propertyId ?>').value);
+
+	<?php elseif ($property['type'] == 'checkbox') : ?>
+			formData.append('<?php echo $propertyId ?>', ((document.getElementById('<?php echo $propertyId ?>').checked) ? 1 : 0));
+
+	<?php elseif ($property['type'] == 'file') : ?>
+			var fileSelect = document.getElementById('order_form');
+			if (fileSelect) {
+				var files = fileSelect.files;
+				for (var i = 0; i < files.length; i++) {
+					var file = files[i];
+					formData.append('order_form', file, file.name);
+				}
+			}
+
+	<?php endif ?>
+
+<?php endforeach ?>
+
+			var xhttp = new XMLHttpRequest();
+			var route, target;
+			route = '<?php echo $this->url('commitmentAccount/register') ?>';
+			target = 'form_action';
+			xhttp.open('POST', route, true);
+			xhttp.onload = function () {
+				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+
+<?php if ($context->getConfig()['ppitCoreSettings']['isTraceActive']) : ?>
+					console.log('post, route = ' + route);
+					console.log(xhttp.responseText);
+<?php endif;?>
+					document.getElementById(target).innerHTML = xhttp.responseText;
+				}
+			};
+			xhttp.send(formData);
+		}
+		else return false;
+	}
+}
+
 </script>

@@ -57,7 +57,7 @@ return array(
 	        								),
 	        						),
 	        				),
-	       						'detail' => array(
+	       					'detail' => array(
         								'type' => 'segment',
         								'options' => array(
         										'route' => '/detail[/:id]',
@@ -329,5 +329,8 @@ return array(
 	),
 	'ppitCoreDependencies' => array(
 			'document' => new \PpitDocument\Model\Document,
+	),
+	'document/index' => array(
+			'title' => array('en_US' => 'P-PIT Document', 'fr_FR' => 'P-PIT Document'),
 	),
 );

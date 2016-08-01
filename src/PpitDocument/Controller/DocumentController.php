@@ -23,7 +23,7 @@ class DocumentController extends AbstractActionController
 		if (!$context->isAuthenticated()) $this->redirect()->toRoute('home');
 	
 		$parent_id = $this->params()->fromRoute('parent_id', null);
-		$menu = $context->getInstance()->specifications['menu'];
+		$menu = $context->getConfig('menu');
 	
 		return new ViewModel(array(
 				'context' => $context,
