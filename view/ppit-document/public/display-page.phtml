@@ -4,7 +4,7 @@
 <?php
 $title = $document->properties['title'];
 $this->headTitle($title);
-echo $context->getHeaderCode();
+echo $this->partial('/partials/header');
 ?>
 <div>&nbsp;</div>
 
@@ -48,9 +48,11 @@ echo $context->getHeaderCode();
 	<?php foreach ($content['actions'] as $actionId => $action) : ?>
 		<?php $href = $action['href'] ?>
 		<?php if ($href['type'] == 'url') : ?> 
-						<button type="button" class="btn btn-default action-btn" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="<?php echo ($href['type'] == 'url') ? 'location_href' : 'showForm' ?>('<?php echo $actionId ?>', '<?php echo $href['value'] ?>')">
+						<button type="button" class="btn btn-default action-btn" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="location_href('<?php echo $actionId ?>', '<?php echo $href['value'] ?>')">
 		<?php elseif ($href['type'] == 'route') : ?>
-						<button type="button" class="btn btn-default action-btn" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="<?php echo ($href['type'] == 'url') ? 'location_href' : 'showForm' ?>('<?php echo $actionId ?>', '<?php echo $this->url($href['value'], $href['params'], $href['urlParams']) ?>')">
+						<button type="button" class="btn btn-default action-btn" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="showForm('<?php echo $actionId ?>', '<?php echo $this->url($href['value'], $href['params'], $href['urlParams']) ?>')">
+		<?php elseif ($href['type'] == 'redirect') : ?>
+						<button type="button" class="btn btn-default action-btn" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="location_href('<?php echo $actionId ?>', '<?php echo $this->url($href['value'], $href['params']).$href['urlParams'] ?>')">
 		<?php endif;?>
 							<?php if (isset($action['glyphicon'])) : ?>
 							<span class="glyphicon glyphicon-<?php echo $action['glyphicon'] ?>"></span>&nbsp;
@@ -96,17 +98,11 @@ echo $context->getHeaderCode();
 
 <script>
 
+<?php
+echo $this->partial('/partials/ppit-controller') 
+?>
+
 $('#form_action').hide();
-
-function location_href(button, target) { 
-	$('#form_action').hide();
-
-	// Highlight the clicked button (and only it in its class)
-	$('.action-btn').removeClass("btn-primary").addClass("btn-default");
-	$('#' + button).removeClass("btn-default").addClass("btn-primary");
-
-	document.location.href=target; 
-}
 
 function showForm(button, target) {
 

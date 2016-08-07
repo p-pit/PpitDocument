@@ -68,7 +68,7 @@ class PublicController extends AbstractActionController
     {
     	$context = Context::getCurrent();
 
-		$homeSpecs = $context->getInstance()->specifications['ppitDocument']['home'];
+		$homeSpecs = $context->getconfig('ppitDocument')['home'];
 		$documents = array();
 
 		$documents['jumbotron'] = Document::getWithPath('home/public/'.$homeSpecs['jumbotron']['directory'].'/'.$homeSpecs['jumbotron']['name']);
