@@ -10,6 +10,7 @@
 			'Approved' => 'Validé',
 			'Approver' => 'Valideur',
 			'Attachment' => 'Pièce jointe',
+			'Credentials' => 'Références',
 			'Delete a document' => 'Supprimer un document',
 			'Delete a directory or document' => 'Supprimer un répertoire ou document',
 			'Directory\'s content' => 'Contenu du répertoire',

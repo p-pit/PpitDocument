@@ -316,7 +316,7 @@ return array(
 				'type'     => 'phparray',
 				'base_dir' => __DIR__ . '/../language',
 				'pattern'  => '%s.php',
-				'text_domain' => 'ppit-core'
+				'text_domain' => 'ppit-document'
 			),
 	       	array(
 	            'type' => 'phpArray',

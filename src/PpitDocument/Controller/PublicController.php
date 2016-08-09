@@ -14,6 +14,7 @@ use Zend\Http\Request;
 use Zend\Http\Response\Stream;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\Log\Formatter\FirePhp;
 
 class PublicController extends AbstractActionController
 {
@@ -51,6 +52,10 @@ class PublicController extends AbstractActionController
 		
 		$document = Document::getWithPath('home/public/'.$directory.'/'.$name);
 		$document->retrieveContent();
+		$credentials = array();
+		if (array_key_exists('credentials', $content)) {
+			foreach ($content['credentials'] as $identifier => $unused) $credentials[$identifier] = Document::getWithPath('home/public/credentials/'.$identifier);
+		}
 
 		$view = new ViewModel(array(
 				'context' => $context,
@@ -59,6 +64,7 @@ class PublicController extends AbstractActionController
 				'name' => $name,
 				'content' => $content,
 				'document' => $document,
+				'credentials' => $credentials,
 				'description' => $document->properties['description'],
 		));
 		return $view;
