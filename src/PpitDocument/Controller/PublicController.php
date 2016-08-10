@@ -57,9 +57,13 @@ class PublicController extends AbstractActionController
 			foreach ($content['credentials'] as $identifier => $unused) $credentials[$identifier] = Document::getWithPath('home/public/credentials/'.$identifier);
 		}
 
+		$request = $this->getRequest();
+		$fqdn = $request->getUri()->getHost();
+		
 		$view = new ViewModel(array(
 				'context' => $context,
 				'config' => $context->getconfig(),
+				'fqdn' => $fqdn,
 				'directory' => $directory,
 				'name' => $name,
 				'content' => $content,
