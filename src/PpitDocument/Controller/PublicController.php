@@ -78,6 +78,9 @@ class PublicController extends AbstractActionController
     {
     	$context = Context::getCurrent();
 
+    	$request = $this->getRequest();
+    	$fqdn = $request->getUri()->getHost();
+
 		$homeSpecs = $context->getconfig('ppitDocument')['home'];
 		$documents = array();
 
@@ -96,6 +99,7 @@ class PublicController extends AbstractActionController
     	return new ViewModel(array(
     			'context' => $context,
     			'config' => $context->getConfig(),
+    			'fqdn' => $fqdn,
 				'description' => $homeSpecs['description'][$context->getLocale()],
     			'homeSpecs' => $homeSpecs,
     			'documents' => $documents,
