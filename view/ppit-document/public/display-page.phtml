@@ -50,8 +50,11 @@ echo $this->partial('/partials/header');
 <?php endfor;?>
 					</div>
 <?php if (array_key_exists('actions', $content)) : ?>
+	<?php $first=true; foreach ($content['actions'] as $actionId => $action) : ?>
+		<?php if (!$first) : ?>
+					<div>&nbsp;</div>
+		<?php endif;?>
 					<div style="text-align: center">
-	<?php foreach ($content['actions'] as $actionId => $action) : ?>
 		<?php $href = $action['href'] ?>
 		<?php if ($href['type'] == 'url') : ?> 
 						<button type="button" class="btn btn-success action-btn" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="location_href('<?php echo $actionId ?>', '<?php echo $href['value'] ?>')">
@@ -61,12 +64,12 @@ echo $this->partial('/partials/header');
 						<button type="button" class="btn btn-success action-btn" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="location_href('<?php echo $actionId ?>', '<?php echo $this->url($href['value'], $href['params']).$href['urlParams'] ?>')">
 		<?php endif;?>
 							<?php if (isset($action['glyphicon'])) : ?>
-							<span class="glyphicon glyphicon-<?php echo $action['glyphicon'] ?>"></span>&nbsp;
+							<span class="glyphicon glyphicon-<?php echo $action['glyphicon'] ?>"></span>
 							<?php endif;?>
 							<?php echo $action['labels'][$context->getLocale()] ?>
 						</button>
-	<?php endforeach ?>
 					</div>
+	<?php $first=false; endforeach ?>
 <?php endif;?>
 
 <?php foreach ($credentials as $identifier => $credential) : ?>
@@ -98,9 +101,14 @@ echo $this->partial('/partials/header');
 					<div style="text-align: center"><a href="<?php echo $this->url('public/displayPage', array('directory' => 'credentials', 'name' => $identifier)) ?>">Lire la suite</a></div>
 <?php endforeach;?>
 					<div>&nbsp;</div>
-					<div>&nbsp;</div>
 				</div>
-				<div style="text-align: center">
+				<div>
+					<a href="https://www.facebook.com/P-PIT-180839485646758/" target="_blank"><img src="<?php echo $this->basePath('/img/facebook.png') ?>" width="24" /></a>
+					<a href="https://www.linkedin.com/company/confiance-it?trk=biz-companies-cym" target="_blank"><img src="<?php echo $this->basePath('/img/linkedin.png') ?>" width="24" /></a>
+					<a href="https://twitter.com/ppitfr" target="_blank"><img src="<?php echo $this->basePath('/img/twitter.png') ?>" width="24" /></a>
+					<a href="https://plus.google.com/u/1/+Confianceit/posts" target="_blank"><img src="<?php echo $this->basePath('/img/google.png') ?>" width="24" /></a>
+					<a href="mailto:?subject=<?php echo $title ?>&body=<?php echo $this->serverUrl(true) ?>" target="_blank"><img src="<?php echo $this->basePath('/img/email.png') ?>" width="24" /></a>
+<!--
 					<script>(function(d, s, id) {
 					  var js, fjs = d.getElementsByTagName(s)[0];
 					  if (d.getElementById(id)) return;
@@ -121,7 +129,7 @@ echo $this->partial('/partials/header');
 	
 					<a class="twitter-share-button" href="https://twitter.com/share" data-via="ppitfr">Tweet</a><script>// <![CDATA[
 					!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-					// ]]></script>
+					// ]]></script> -->
 				</div>	
              </div>
         </div>
