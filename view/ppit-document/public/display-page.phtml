@@ -72,10 +72,10 @@ echo $this->partial('/partials/header');
 	<?php $first=false; endforeach ?>
 <?php endif;?>
 
+					<div>&nbsp;</div>
+
 <?php foreach ($credentials as $identifier => $credential) : ?>
-					<div>&nbsp;</div>
-					<h3 style="text-align:center"><?php echo $this->translate('Credentials', 'ppit-document', $context->getLocale())?></h3>
-					<div>&nbsp;</div>
+					<hr>
 					<div>
 	<?php if ($credential->image) : ?>
 						<div align="center">
