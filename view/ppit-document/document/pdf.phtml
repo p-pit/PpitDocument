@@ -200,7 +200,9 @@ div.footer {
 		<script type="text/javascript" src="<?php echo $this->basePath('js/bootstrap.min.js') ?>"></script>
 	</head>
 <body>
-<?php echo $context->getPdfHeaderCode() ?>
+<?php
+echo $this->partial('/partials/pdf-header');
+?>
 <?php foreach ($document->parts as $part) : ?>
 				<?php echo $part->content; ?>
 <?php endforeach;?>
