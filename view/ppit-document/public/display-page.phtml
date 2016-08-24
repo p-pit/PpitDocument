@@ -161,17 +161,12 @@ function showForm(button, target) {
 	xhttp.onreadystatechange = function() {
 		if (xhttp.readyState == 4 <?php if (!$config['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 			document.getElementById('form_action').innerHTML = xhttp.responseText;
-<?php if ($config['ppitCoreSettings']['isTraceActive']) : ?>
-			console.log('form_action, route = ' + target);
-			console.log(xhttp.responseText);
-<?php endif;?>
-
 			$('#remove-anchor').click(function() { 
 				$('#form_action').hide(); 
 				$('.action-btn').removeClass("btn-primary").addClass("btn-default");
 			});
-
-			connectAccountRegisterForm();
+			connectInstanceTryForm();
+			$('#caption').focus();
 		}
 	}
 	xhttp.send();
@@ -179,17 +174,20 @@ function showForm(button, target) {
 
 <?php 
 $properties = array();
+$properties['caption'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
+$properties['n_title'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
+$properties['n_first'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
+$properties['n_last'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
+$properties['email'] = array('type' => 'email', 'mandatory' => true, 'maxSize' => 255);
+$properties['tel_work'] = array('type' => 'phone', 'mandatory' => true, 'maxSize' => 255);
+$properties['username'] = array('type' => 'input', 'mandatory' => true, 'maxSize' => 255);
+$properties['requires_notifications'] = array('type' => 'hidden');
+$properties['locale'] = array('type' => 'hidden');
 
-foreach ($context->getConfig('commitmentAccount/register') as $propertyId => $options) {
-	$property = $context->getConfig('commitmentAccount')['properties'][$propertyId];
-	$properties[$propertyId] = array('type' => $property['type'], 'mandatory' => $options['mandatory'], 'maxSize' => ($property['type'] == 'textarea') ? 2047 : 255);
-}
-$properties['update_time'] = array('type' => 'hidden');
-
-echo $this->partial('/partials/check-update-properties', array('entity' => 'Account', 'context' => $context, 'properties' => $properties)) 
+echo $this->partial('/partials/check-update-properties', array('entity' => 'Instance', 'context' => $context, 'properties' => $properties)) 
 ?>
 
-function connectAccountRegisterForm()
+function connectInstanceTryForm()
 {
 <?php foreach ($properties as $propertyId => $property) : ?>
 	<?php if ($property['type'] == 'date') : ?>
@@ -203,7 +201,7 @@ function connectAccountRegisterForm()
 		event.preventDefault();
 
 // Check validity
-		var validity = checkAccountUpdateProperties();
+		var validity = checkInstanceUpdateProperties();
 
 		if (validity) {
 
@@ -235,17 +233,17 @@ function connectAccountRegisterForm()
 
 			var xhttp = new XMLHttpRequest();
 			var route, target;
-			route = '<?php echo $this->url('commitmentAccount/register') ?>';
+			route = '<?php echo $this->url('commitment/try') ?>';
 			target = 'form_action';
 			xhttp.open('POST', route, true);
 			xhttp.onload = function () {
 				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
-
-<?php if ($context->getConfig()['ppitCoreSettings']['isTraceActive']) : ?>
-					console.log('post, route = ' + route);
-					console.log(xhttp.responseText);
-<?php endif;?>
 					document.getElementById(target).innerHTML = xhttp.responseText;
+					$('#remove-anchor').click(function() { 
+						$('#form_action').hide(); 
+						$('.action-btn').removeClass("btn-primary").addClass("btn-default");
+					});
+					connectInstanceTryForm();
 				}
 			};
 			xhttp.send(formData);
