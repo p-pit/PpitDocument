@@ -149,10 +149,6 @@ $('#form_action').hide();
 
 function showForm(button, target) {
 
-	// Highlight the clicked button (and only it in its class)
-	$('.action-btn').removeClass("btn-primary").addClass("btn-default");
-	$('#' + button).removeClass("btn-default").addClass("btn-primary");
-
 	$('#form_action').show();
 	$(location).attr('hash', 'form_action');
 	
@@ -163,7 +159,6 @@ function showForm(button, target) {
 			document.getElementById('form_action').innerHTML = xhttp.responseText;
 			$('#remove-anchor').click(function() { 
 				$('#form_action').hide(); 
-				$('.action-btn').removeClass("btn-primary").addClass("btn-default");
 			});
 			connectInstanceTryForm();
 			$('#caption').focus();
