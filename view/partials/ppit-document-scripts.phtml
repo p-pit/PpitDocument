@@ -226,13 +226,12 @@ function getDocumentList(parent_id, params, major, dir) {
 	xhttp = new XMLHttpRequest();
 	xhttp.open("GET", route, true);
 	xhttp.onreadystatechange = function() {
-
-		if (xhttp.readyState == 4 <?php if (!$config['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('ppitUser/expired')?>';
+		if (xhttp.readyState == 4) {
+	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+			if (xhttp.status == 200) {
+	<?php endif;?>
 			document.getElementById('document-list-panel').innerHTML = xhttp.responseText;
-<?php if ($config['ppitCoreSettings']['isTraceActive']) : ?>
-			console.log('showing panel: document-list-panel, url = ' + route);
-			console.log(xhttp.responseText);
-<?php endif;?>
 			
 			// Connect the sort anchors
 			$('.ppit-sort-anchor').each(function () {
@@ -254,6 +253,9 @@ function getDocumentList(parent_id, params, major, dir) {
 					getDocumentList($(this).attr('id').split('_')[1], params, major, dir);
 				});
 			});
+	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+			}
+	<?php endif;?>
 		}
 	}
 	xhttp.send();
@@ -370,16 +372,19 @@ function getDocumentDetail(parent_id, id) {
 	xhttp = new XMLHttpRequest();
 	xhttp.open("GET", route, true);
 	xhttp.onreadystatechange = function() {
-		if (xhttp.readyState == 4 <?php if (!$config['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+		if (xhttp.status == 401) location.href = '<?php echo $this->url('ppitUser/expired')?>';
+		if (xhttp.readyState == 4) {
+	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+			if (xhttp.status == 200) {
+	<?php endif;?>
 			document.getElementById('form_action').innerHTML = xhttp.responseText;
-<?php if ($config['ppitCoreSettings']['isTraceActive']) : ?>
-			console.log('showing panel: form_action, url = ' + route);
-			console.log(xhttp.responseText);
-<?php endif;?>
 
 //			connectAuditPanel();
 			connectRemoveIcon(parent_id, 'remove-anchor', 'form_action');
 			getDocumentUpdate(parent_id, id);
+	<?php if (!$config['ppitCoreSettings']['isTraceActive']) : ?>
+			}
+	<?php endif;?>
 		}
 	}
 	xhttp.send();

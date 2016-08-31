@@ -34,6 +34,7 @@ echo $this->partial('/partials/header');
 							<img 
 		<?php foreach ($documentPart->image as $attr => $value) : ?>
 			<?php if ($attr == 'src') : ?>
+				<?php if (is_array($value)) $value = $value[rand(0, count($value)-1)]?>
 								src="<?php echo $this->basePath($value) ?>"
 			<?php elseif ($attr != 'href' && $attr != 'target') : ?>
 								<?php echo $attr ?>="<?php echo $value ?>"
@@ -139,11 +140,26 @@ echo $this->partial('/partials/header');
      </div>
 </div>
 
+<style>
+.loader {
+	position : fixed;
+	z-index: 9999;
+//	background : url('<?php echo $this->basePath('/img/loading.gif') ?>') 50% 50% no-repeat;
+	background-color: rgba(118, 204, 243, 0.25);
+	top : 0px;
+	left : 0px;
+	height : 100%;
+	width : 100%;
+	cursor : wait;
+}
+</style>
+<div id="loader" />
+
 <script>
 
-<?php
-echo $this->partial('/partials/ppit-controller') 
-?>
+function location_href(button, target) { 
+	document.location.href=target; 
+}
 
 $('#form_action').hide();
 
@@ -236,11 +252,13 @@ function connectInstanceTryForm()
 					document.getElementById(target).innerHTML = xhttp.responseText;
 					$('#remove-anchor').click(function() { 
 						$('#form_action').hide(); 
-						$('.action-btn').removeClass("btn-primary").addClass("btn-default");
 					});
 					connectInstanceTryForm();
+					$('#loader').removeClass('loader');
 				}
 			};
+			
+			$('#loader').addClass('loader');
 			xhttp.send(formData);
 		}
 		else return false;
