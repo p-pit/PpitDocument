@@ -330,6 +330,8 @@ return array(
 	'ppitCoreDependencies' => array(
 			'document' => new \PpitDocument\Model\Document,
 	),
+	'ppitDocument' => array(
+	),
 	'document/index' => array(
 			'title' => array('en_US' => 'P-PIT Document', 'fr_FR' => 'P-PIT Document'),
 	),

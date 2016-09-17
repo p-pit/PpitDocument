@@ -98,6 +98,12 @@ class Document implements InputFilterAwareInterface
 		$this->content = array();
     }*/
 
+    public static function getDropboxClient() {
+    	$context = Context::getCurrent();
+		require_once "vendor/dropbox/dropbox-sdk/lib/Dropbox/autoload.php";
+		return new \Dropbox\Client($context->getInstance()->specifications['ppitDocument']['dropboxCredential'], "P-PIT");
+    }
+    
     protected function getParents($document, &$result) {
     	$context = Context::getCurrent();
     	if ($document) {
@@ -179,7 +185,7 @@ class Document implements InputFilterAwareInterface
 			}
 		}
     	else $document = Document::getTable()->get($id, $column);
-    	 
+
 	    // Recursively retrieve the parents
 	    $document->parents = array();
 	    $document->getParents($document, $document->parents);
