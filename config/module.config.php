@@ -325,6 +325,10 @@ return array(
 	        ),
  		),
 	),
+	'ppitRoles' => array(
+			'PpitDocument' => array(
+			),
+	),
 	'ppitDocumentDependencies' => array(
 	),
 	'ppitCoreDependencies' => array(
