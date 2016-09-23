@@ -172,6 +172,18 @@ class Document implements InputFilterAwareInterface
 
 		return $documents;
     }
+/*
+    public static function instanciate($contents)
+    {
+    	$document = new Document;
+    	$document->parts = array();
+    	foreach ($contents as $content) {
+    		$documentPart = new DocumentPart;
+    		$documentPart->content = $content;
+    		$document->parts[] = $documentPart;
+    	}
+    	return $document;
+    }*/
 
     public static function get($id, $column = 'id')
     {
@@ -422,6 +434,14 @@ class Document implements InputFilterAwareInterface
 		Document::getTable()->save($this);
 	}
 
+	public function add()
+	{
+		$this->id = 0;
+		Document::getTable()->save($this);
+		$this->saveContent();
+		return $this->id;
+	}
+	
 	public function isUsed($object)
 	{
 		// Allow or not deleting a community
