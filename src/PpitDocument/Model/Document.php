@@ -100,8 +100,10 @@ class Document implements InputFilterAwareInterface
 
     public static function getDropboxClient() {
     	$context = Context::getCurrent();
-		require_once "vendor/dropbox/dropbox-sdk/lib/Dropbox/autoload.php";
-		return new \Dropbox\Client($context->getInstance()->specifications['ppitDocument']['dropboxCredential'], "P-PIT");
+ 		if (array_key_exists('dropboxCredential', $context->getConfig('ppitDocument'))) {
+	    	require_once "vendor/dropbox/dropbox-sdk/lib/Dropbox/autoload.php";
+			return new \Dropbox\Client($context->getInstance()->specifications['ppitDocument']['dropboxCredential'], "P-PIT");
+ 		}
     }
     
     protected function getParents($document, &$result) {
