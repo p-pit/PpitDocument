@@ -19,6 +19,7 @@
 			'Download a file' => 'Télécharger un document',
 			'Finder' => 'Explorateur',
 			'Directory' => 'Répertoire',
+			'Folder' => 'Classeur',
 			'Online visas' => 'Visas en ligne',
 			'Please empty this directory before deleting it' => 'Veuillez vider ce répertoire avant de le supprimer',
 			'Print' => 'Imprimer',

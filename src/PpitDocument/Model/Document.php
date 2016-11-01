@@ -100,9 +100,10 @@ class Document implements InputFilterAwareInterface
 
     public static function getDropboxClient() {
     	$context = Context::getCurrent();
- 		if (array_key_exists('dropboxCredential', $context->getConfig('ppitDocument'))) {
+ 		if (array_key_exists('dropbox', $context->getConfig('ppitDocument'))) {
 	    	require_once "vendor/dropbox/dropbox-sdk/lib/Dropbox/autoload.php";
-			return new \Dropbox\Client($context->getInstance()->specifications['ppitDocument']['dropboxCredential'], "P-PIT");
+			$dropbox = $context->getConfig('ppitDocument')['dropbox'];
+	    	return new \Dropbox\Client($dropbox['credential'], $dropbox['clientIdentifier']);
  		}
     }
     
@@ -409,8 +410,9 @@ class Document implements InputFilterAwareInterface
 						}
 					
 						if ($dropbox) {
-							require_once "vendor/dropbox/dropbox-sdk/lib/Dropbox/autoload.php";
-							$dbxClient = new \Dropbox\Client($context->getInstance()->specifications['ppitDocument']['dropboxCredential'], "P-PIT");
+    						require_once "vendor/dropbox/dropbox-sdk/lib/Dropbox/autoload.php";
+				    		$dropboxSpecs = $context->getConfig('ppitDocument')['dropbox'];
+				    		$dbxClient = new \Dropbox\Client($dropboxSpecs['credential'], $dropboxSpecs['clientIdentifier']);
 							$f = fopen('data/documents/'.$this->id, "rb");
 							$result = $dbxClient->uploadFile($dropbox.$this->name, \Dropbox\WriteMode::add(), $f);
 							fclose($f);
