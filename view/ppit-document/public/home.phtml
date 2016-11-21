@@ -5,22 +5,6 @@ echo $this->partial('/partials/header');
 ?>
 <div>&nbsp;</div>
 
-<!-- Contact us -->
-<div id="contact_us" style="text-align: right">
-<?php foreach ($homeSpecs['contactUs'] as $menuItem) : ?>
-	<button type="button" class="btn btn-primary" title="<?php echo $menuItem['title'][$context->getLocale()] ?>" onClick="location_href('<?php echo $menuItem['href'] ?>')">
-		<?php if (isset($menuItem['glyphicon'])) : ?>
-		<span class="glyphicon glyphicon-<?php echo $menuItem['glyphicon'] ?>"></span>&nbsp;
-		<?php endif;?>
-		<?php if (isset($menuItem['text'])) : ?>
-		<?php echo $menuItem['text'][$context->getLocale()] ?>
-		<?php endif;?>
-	</button>
-&nbsp;&nbsp;
-<?php endforeach;?>
-</div>
-<div>&nbsp;</div>
-
 <!-- Jumbotron -->
 <div id="jumbotron" class="jumbotron">
 
@@ -117,7 +101,25 @@ echo $this->partial('/partials/header');
     </div>
 </div>
 <div>&nbsp;</div>
-<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $this->url('public/displayPage', array('directory' => $homeSpecs['blog']['directory'], 'name' => $homeSpecs['blog']['name'])) ?>">Blog</a></div>
+
+<!-- Contact us -->
+<div id="contact_us" style="text-align: center">
+	<button type="button" class="btn btn-default" title="<?php echo $menuItem['title'][$context->getLocale()] ?>">
+		<a href="<?php echo $this->url('public/displayPage', array('directory' => $homeSpecs['blog']['directory'], 'name' => $homeSpecs['blog']['name'])) ?>">Blog</a>
+	</button>
+	&nbsp;&nbsp;
+<?php foreach ($homeSpecs['contactUs'] as $menuItem) : ?>
+	<button type="button" class="btn btn-default" title="<?php echo $menuItem['title'][$context->getLocale()] ?>" onClick="location_href('<?php echo $menuItem['href'] ?>')">
+		<?php if (isset($menuItem['glyphicon'])) : ?>
+		<span class="glyphicon glyphicon-<?php echo $menuItem['glyphicon'] ?>"></span>&nbsp;
+		<?php endif;?>
+		<?php if (isset($menuItem['text'])) : ?>
+		<?php echo $menuItem['text'][$context->getLocale()] ?>
+		<?php endif;?>
+	</button>
+	&nbsp;&nbsp;
+<?php endforeach;?>
+</div>
 <div>&nbsp;</div>
 
 <script>

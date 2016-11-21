@@ -70,6 +70,7 @@ class PublicController extends AbstractActionController
 				'document' => $document,
 				'credentials' => $credentials,
 				'description' => $document->properties['description'],
+    			'robots' => 'index, follow',
 		));
 		return $view;
 	}
@@ -103,6 +104,8 @@ class PublicController extends AbstractActionController
 				'description' => $homeSpecs['description'][$context->getLocale()],
     			'homeSpecs' => $homeSpecs,
     			'documents' => $documents,
+    			'robots' => 'index, follow',
+    			'homePage' => true,
     	));
     }
 }

@@ -1,20 +1,17 @@
-<!-- Load the common form javascript functions -->
-<?php echo $this->partial('/partials/common-form-js.phtml'); ?>
-
 <?php
 $title = $document->properties['title'];
 $this->headTitle($title);
 echo $this->partial('/partials/header');
 ?>
+<section>
 <div>&nbsp;</div>
 
 <!-- Front product 1 -->
 <div class="row">
-
     <div class="col-md-8 col-md-offset-2">
         <div class="panel panel-default">
             <div class="panel-heading front-page">
-                <div id="front_product_1_title"><?php if (array_key_exists('date',$document->properties)) echo $context->decodeDate($document->properties['date']).': ' ?><?php echo $document->properties['title'] ?></div>
+                <h1 id="front_product_1_title" style="font-size: 110%; margin-top: 10px;"><?php if (array_key_exists('date',$document->properties)) echo $context->decodeDate($document->properties['date']).': ' ?><?php echo $document->properties['title'] ?></h1>
             </div>
             <div class="panel-body">
        			<div id="front_product_1">
@@ -48,8 +45,9 @@ echo $this->partial('/partials/header');
 	<?php endif;?>
 			
 						<div><?php echo $documentPart->content ?></div>
-<?php endfor;?>
 					</div>
+<?php endfor;?>
+
 <?php if (array_key_exists('actions', $content)) : ?>
 	<?php $first=true; foreach ($content['actions'] as $actionId => $action) : ?>
 		<?php if (!$first) : ?>
@@ -104,11 +102,11 @@ echo $this->partial('/partials/header');
 					<div>&nbsp;</div>
 				</div>
 				<div>
-					<a href="https://www.facebook.com/P-PIT-180839485646758/" target="_blank"><img src="<?php echo $this->basePath('/img/facebook.png') ?>" width="24" /></a>
-					<a href="https://www.linkedin.com/company/confiance-it?trk=biz-companies-cym" target="_blank"><img src="<?php echo $this->basePath('/img/linkedin.png') ?>" width="24" /></a>
-					<a href="https://twitter.com/ppitfr" target="_blank"><img src="<?php echo $this->basePath('/img/twitter.png') ?>" width="24" /></a>
-					<a href="https://plus.google.com/u/1/+Confianceit/posts" target="_blank"><img src="<?php echo $this->basePath('/img/google.png') ?>" width="24" /></a>
-					<a href="mailto:?subject=<?php echo $title ?>&body=<?php echo $this->serverUrl(true) ?>" target="_blank"><img src="<?php echo $this->basePath('/img/email.png') ?>" width="24" /></a>
+					<a href="https://www.facebook.com/P-PIT-180839485646758/" target="_blank"><img src="<?php echo $this->basePath('/img/facebook.png') ?>" width="24" alt="P-Pit on Facebook" /></a>
+					<a href="https://www.linkedin.com/company/confiance-it?trk=biz-companies-cym" target="_blank"><img src="<?php echo $this->basePath('/img/linkedin.png') ?>" width="24" alt="P-Pit on Linkedin" /></a>
+					<a href="https://twitter.com/ppitfr" target="_blank"><img src="<?php echo $this->basePath('/img/twitter.png') ?>" width="24" alt="P-Pit on Twitter" /></a>
+					<a href="https://plus.google.com/u/1/+Confianceit/posts" target="_blank"><img src="<?php echo $this->basePath('/img/google.png') ?>" width="24" alt="P-Pit on Google" /></a>
+					<a href="mailto:?subject=<?php echo $title ?>&body=<?php echo $this->serverUrl(true) ?>" target="_blank"><img src="<?php echo $this->basePath('/img/email.png') ?>" width="24" alt="Share by email" /></a>
 <!--
 					<script>(function(d, s, id) {
 					  var js, fjs = d.getElementsByTagName(s)[0];
@@ -136,9 +134,9 @@ echo $this->partial('/partials/header');
         </div>
 	</div>
 
-    <div class="col-md-6 col-md-offset-3" id="form_action">
-     </div>
+    <div class="col-md-6 col-md-offset-3" id="form_action"></div>
 </div>
+</section>
 
 <style>
 .loader {
@@ -154,6 +152,8 @@ echo $this->partial('/partials/header');
 }
 </style>
 <div id="loader" />
+
+<?php echo $this->partial('/partials/common-form-js.phtml'); ?>
 
 <script>
 
