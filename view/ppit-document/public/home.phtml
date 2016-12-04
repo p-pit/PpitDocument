@@ -34,6 +34,7 @@ echo $this->partial('/partials/header');
 					</div>
 </div>
 
+<?php if (count($homeSpecs['frontProducts']) > 0) : ?>
 <!-- Front products -->
 <div class="row">
 
@@ -101,6 +102,7 @@ echo $this->partial('/partials/header');
     </div>
 </div>
 <div>&nbsp;</div>
+<?php endif;?>
 
 <!-- Contact us -->
 <div id="contact_us" style="text-align: center">
@@ -117,7 +119,7 @@ echo $this->partial('/partials/header');
 	</button>
 	&nbsp;&nbsp;
 <?php endforeach;?>
-</div>
+<a href="https://twitter.com/ppitfr" class="twitter-follow-button" data-show-count="false">Follow @ppitfr</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>
 <div>&nbsp;</div>
 
 <script>
