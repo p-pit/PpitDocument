@@ -1,5 +1,5 @@
 <?php 
-$spa = $context->isSpaMode();
+$spa = true;
 $anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
 ?>
 
@@ -86,10 +86,6 @@ $anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
 							</a>
 						</div>
 					</div>
-<?php endif;?>
-
-<?php if (!$context->isSpaMode()) : ?>
-				</form>
 <?php endif;?>
 					</div>
 				</div>

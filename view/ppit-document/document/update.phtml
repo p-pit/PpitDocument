@@ -1,5 +1,5 @@
 <?php 
-$spa = $context->isSpaMode();
+$spa = true;
 $anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
 ?>
 
@@ -145,8 +145,6 @@ $anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
 	</div>
 </div>
 <?php endif;?>
-
-<?php if (!$context->isSpaMode()) echo $this->partial('partials/view-controller') ?>
 
 <script id='document_update_script'>
 

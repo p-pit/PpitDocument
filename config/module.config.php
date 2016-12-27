@@ -250,7 +250,20 @@ return array(
 	        								),
 	        						),
 	        				),
-	        				'home' => array(
+            				'displayBlog' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/blog[/:directory][/:name]',
+            								'constraints' => array(
+											        'directory' => '[a-zA-Z0-9_-]+',
+											        'name' => '[a-zA-Z0-9_-]+',
+            								),
+	        								'defaults' => array(
+	        										'action' => 'displayBlog',
+	        								),
+	        						),
+	        				),
+            				'home' => array(
 	        						'type' => 'segment',
 	        						'options' => array(
 	        								'route' => '/home',
@@ -288,6 +301,7 @@ return array(
 				array('route' => 'document/delete', 'roles' => array('user')),
 				array('route' => 'public/displayContent', 'roles' => array('guest')),
 				array('route' => 'public/displayPage', 'roles' => array('guest')),
+				array('route' => 'public/displayBlog', 'roles' => array('guest')),
 				array('route' => 'public/home', 'roles' => array('guest')),
 			)
 		)

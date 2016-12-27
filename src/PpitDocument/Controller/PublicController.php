@@ -2,10 +2,10 @@
 namespace PpitDocument\Controller;
 
 use DOMPDFModule\View\Model\PdfModel;
-use PpitContact\Model\Vcard;
 use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Context;
 use PpitCore\Model\Csrf;
+use PpitCore\Model\Vcard;
 use PpitDocument\Model\Document;
 use PpitDocument\Model\DocumentPart;
 use PpitUser\Model\Token;
@@ -75,6 +75,45 @@ class PublicController extends AbstractActionController
 		return $view;
 	}
 
+	public function displayBlogAction() {
+	
+		// Retrieve the context
+		$context = Context::getCurrent();
+		$directory = $this->params()->fromRoute('directory', 0);
+		$name = $this->params()->fromRoute('name', 0);
+		$content = $context->getInstance()->specifications['ppitDocument']['pages'][$directory][$name];
+	
+		$document = Document::getWithPath('home/public/'.$directory.'/'.$name);
+		$document->retrieveContent();
+		$credentials = array();
+		if (array_key_exists('credentials', $content)) {
+			foreach ($content['credentials'] as $identifier => $unused) $credentials[$identifier] = Document::getWithPath('home/public/credentials/'.$identifier);
+		}
+		
+		$entryList = array();
+		foreach ($context->getInstance()->specifications['ppitDocument']['pages'][$directory] as $entryId => $unused) {
+			if ($entryId == $name) $entryList[$entryId] = $document;
+			else $entryList[$entryId] = Document::getWithPath('home/public/blog/'.$entryId);
+		}
+		$request = $this->getRequest();
+		$fqdn = $request->getUri()->getHost();
+	
+		$view = new ViewModel(array(
+				'context' => $context,
+				'config' => $context->getconfig(),
+				'fqdn' => $fqdn,
+				'directory' => $directory,
+				'name' => $name,
+				'content' => $content,
+				'entryList' => $entryList,
+				'document' => $document,
+				'credentials' => $credentials,
+				'description' => $document->properties['description'],
+				'robots' => 'index, follow',
+		));
+		return $view;
+	}
+	
     public function homeAction()
     {
     	$context = Context::getCurrent();

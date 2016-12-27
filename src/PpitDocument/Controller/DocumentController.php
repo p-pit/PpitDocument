@@ -2,10 +2,10 @@
 namespace PpitDocument\Controller;
 
 use DOMPDFModule\View\Model\PdfModel;
-use PpitContact\Model\Vcard;
 use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Context;
 use PpitCore\Model\Csrf;
+use PpitCore\Model\Vcard;
 use PpitDocument\Model\Document;
 use PpitDocument\Model\DocumentPart;
 use PpitUser\Model\Token;
@@ -189,7 +189,6 @@ class DocumentController extends AbstractActionController
 				'dir' => $dir,
     			'parent' => $parent,
 		));
-//		if ($context->isSpaMode()) $view->setTerminal(true);
 		return $view;
 	}
 
@@ -277,7 +276,7 @@ class DocumentController extends AbstractActionController
 				'parent' => $parent,
 				'document' => $document,
 		));
-		if ($context->isSpaMode()) $view->setTerminal(true);
+		$view->setTerminal(true);
 		return $view;
 	}
 
@@ -306,7 +305,7 @@ class DocumentController extends AbstractActionController
 		$context = Context::getCurrent();
 
 		$view = $this->display();
-		if ($context->isSpaMode()) $view->setTerminal(true);
+		$view->setTerminal(true);
 		return $view;
 	}
 
@@ -416,7 +415,7 @@ var_dump("part_receiving : ".$request->getPost('part_receiving'));*/
 				'error' => $error,
 				'csrfForm' => $csrfForm,
 		));
-		if ($context->isSpaMode()) $view->setTerminal(true);
+		$view->setTerminal(true);
 		return $view;
 	}
 
@@ -524,7 +523,7 @@ var_dump("part_receiving : ".$request->getPost('part_receiving'));*/
 				'document' => $document,
 				'parent' => $parent,
 		));
-		if ($context->isSpaMode()) $view->setTerminal(true);
+		$view->setTerminal(true);
 		return $view;
 	}
 
@@ -604,7 +603,7 @@ var_dump("part_receiving : ".$request->getPost('part_receiving'));*/
 				'message' => $message,
 				'error' => $error,
 		));
-		if ($context->isSpaMode()) $view->setTerminal(true);
+		$view->setTerminal(true);
 		return $view;
 	}
 
@@ -653,7 +652,7 @@ var_dump("part_receiving : ".$request->getPost('part_receiving'));*/
 				'message' => $message,
 				'error' => $error,
 		));
-		if ($context->isSpaMode()) $view->setTerminal(true);
+		$view->setTerminal(true);
 		return $view;
 	}
 }

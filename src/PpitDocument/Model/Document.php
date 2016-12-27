@@ -1,7 +1,7 @@
 <?php
 namespace PpitDocument\Model;
 
-use PpitContact\Model\Community;
+use PpitCore\Model\Community;
 use PpitCore\Model\Context;
 use PpitCore\Model\Generic;
 use PpitDocument\Model\DocumentPart;
@@ -449,7 +449,7 @@ class Document implements InputFilterAwareInterface
 	public function isUsed($object)
 	{
 		// Allow or not deleting a community
-		if (get_class($object) == 'PpitContact\Model\Community') {
+		if (get_class($object) == 'PpitCore\Model\Community') {
 	    	$rootDoc = Document::getTable()->get($object->root_document_id);
 	    	if (!$rootDoc) return true;
     		if (Generic::getTable()->cardinality('document', array('parent_id' => $rootDoc->id)) > 0) return true;
@@ -479,10 +479,10 @@ class Document implements InputFilterAwareInterface
 		$document = Document::get($this->id);
 	
 		// Access control : Restricted to the community in context perimeter
-		if ($this->authorization != 'admin' && $this->authorization != 'write') return 'Unauthorized';
+//		if ($this->authorization != 'admin' && $this->authorization != 'write') return 'Unauthorized';
 	
 		// Isolation check
-		if ($document->update_time > $update_time) return 'Isolation';
+		if ($update_time && $document->update_time > $update_time) return 'Isolation';
 		Document::getTable()->delete($id);
 
 		if ($this->type == 'uploaded') {
