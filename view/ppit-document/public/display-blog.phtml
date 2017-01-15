@@ -1,5 +1,8 @@
 <?php
-$title = $document->properties['title'];
+if ($context->getLocale() == 'en_US' && $document->properties_en_us) $properties = $document->properties_en_us;
+elseif ($context->getLocale() == 'fr_FR' && $document->properties_fr_fr) $properties = $document->properties_fr_fr;
+else $properties = $document->properties;
+$title = $properties['title'];
 $this->headTitle($title);
 echo $this->partial('/partials/header');
 ?>
@@ -16,21 +19,32 @@ echo $this->partial('/partials/header');
 <?php foreach ($entryList as $entryId => $entry) : ?>
 	<?php if ($entryId == $name) : ?>
 
+		<?php
+		if ($context->getLocale() == 'en_US' && $entry->properties_en_us) $properties = $entry->properties_en_us;
+		elseif ($context->getLocale() == 'fr_FR' && $entry->properties_fr_fr) $properties = $entry->properties_fr_fr;
+		else $properties = $entry->properties;
+		?>
+
 <!-- Display the document -->
-                <h1 style="font-size: 150%; font-width: bold"><?php if (array_key_exists('date',$entry->properties)) echo $context->decodeDate($entry->properties['date']).': ' ?><?php echo $entry->properties['title'] ?></h1>
+                <h1 style="font-size: 150%; font-width: bold"><?php if (array_key_exists('date',$properties)) echo $context->decodeDate($entry->properties['date']).': ' ?><?php echo $properties['title'] ?></h1>
 
 		<?php for ($i = 0; $i < count($document->parts); $i++) : ?>
 			<?php $documentPart = $document->parts[$i]; ?>
 
 					<div id="document_part_panel_<?php echo $documentPart->id ?>">
 	
-			<?php if ($documentPart->image) : ?>
+			<?php
+			if ($context->getLocale() == 'en_US' && $documentPart->image_en_us) $image = $documentPart->image_en_us;
+			elseif ($context->getLocale() == 'fr_FR' && $documentPart->image_fr_fr) $image = $documentPart->image_fr_fr;
+			else $image = $documentPart->image;
+			?>
+			<?php if ($image) : ?>
 						<div align="center">
-				<?php if (array_key_exists('href', $documentPart->image)) : ?>
-							<a href="<?php echo $documentPart->image['href'] ?>" <?php if (array_key_exists('target', $documentPart->image)) echo 'target="'.$documentPart->image['target'].'"' ?>>
+				<?php if (array_key_exists('href', $image)) : ?>
+							<a href="<?php echo $image['href'] ?>" <?php if (array_key_exists('target', $image)) echo 'target="'.$documentPart->image['target'].'"' ?>>
 				<?php endif;?>
 							<img 
-				<?php foreach ($documentPart->image as $attr => $value) : ?>
+				<?php foreach ($image as $attr => $value) : ?>
 					<?php if ($attr == 'src') : ?>
 						<?php if (is_array($value)) $value = $value[rand(0, count($value)-1)]?>
 								src="<?php echo $this->basePath($value) ?>"
@@ -39,17 +53,22 @@ echo $this->partial('/partials/header');
 					<?php endif;?>
 				<?php endforeach;?>
 							/>
-				<?php if (array_key_exists('href', $documentPart->image)) : ?>
+				<?php if (array_key_exists('href', $image)) : ?>
 							</a>
 				<?php endif;?>
 						</div>
 			<?php endif;?>
-			
-						<div><?php echo $documentPart->content ?></div>
+
+			<?php
+			if ($context->getLocale() == 'en_US' && $documentPart->content_en_us) $content = $documentPart->content_en_us;
+			elseif ($context->getLocale() == 'fr_FR' && $documentPart->content_fr_fr) $content = $documentPart->content_fr_fr;
+			else $content = $documentPart->content;
+			?>
+						<div><?php echo $content ?></div>
 					</div>
 		<?php endfor;?>
 	<?php else : ?>
-                <a href="<?php echo $this->url('public/displayBlog', array('directory' => $directory, 'name' => $entryId)) ?>"><h1 style="font-size: 110%; margin-top: 10px;"><?php if (array_key_exists('date',$entry->properties)) echo $context->decodeDate($entry->properties['date']).': ' ?><?php echo $entry->properties['title'] ?></h1></a>
+                <a href="<?php echo $this->url('public/displayBlog', array('directory' => $directory, 'name' => $entryId)) ?>"><h1 style="font-size: 110%; margin-top: 10px;"><?php if (array_key_exists('date',$properties)) echo $context->decodeDate($properties['date']).': ' ?><?php echo $properties['title'] ?></h1></a>
 	<?php endif;?>
 <?php endforeach;?>
 					<div>&nbsp;</div>

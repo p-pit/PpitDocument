@@ -43,18 +43,18 @@ class PublicController extends AbstractActionController
 	}
 
 	public function displayPageAction() {
-	
 		// Retrieve the context
 		$context = Context::getCurrent();
+
 		$directory = $this->params()->fromRoute('directory', 0);
 		$name = $this->params()->fromRoute('name', 0);
-		$content = $context->getInstance()->specifications['ppitDocument']['pages'][$directory][$name];
+		$specifications = $context->getInstance()->specifications['ppitDocument']['pages'][$directory][$name];
 		
 		$document = Document::getWithPath('home/public/'.$directory.'/'.$name);
 		$document->retrieveContent();
 		$credentials = array();
-		if (array_key_exists('credentials', $content)) {
-			foreach ($content['credentials'] as $identifier => $unused) $credentials[$identifier] = Document::getWithPath('home/public/credentials/'.$identifier);
+		if (array_key_exists('credentials', $specifications)) {
+			foreach ($specifications['credentials'] as $identifier => $unused) $credentials[$identifier] = Document::getWithPath('home/public/credentials/'.$identifier);
 		}
 
 		$request = $this->getRequest();
@@ -66,7 +66,7 @@ class PublicController extends AbstractActionController
 				'fqdn' => $fqdn,
 				'directory' => $directory,
 				'name' => $name,
-				'content' => $content,
+				'specifications' => $specifications,
 				'document' => $document,
 				'credentials' => $credentials,
 				'description' => $document->properties['description'],

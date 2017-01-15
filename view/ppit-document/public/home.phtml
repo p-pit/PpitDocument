@@ -15,10 +15,15 @@ echo $this->partial('/partials/header');
 
 					<div id="document_part_panel_<?php echo $documentPart->id ?>">
 	
-	<?php if ($documentPart->image) : ?>
+	<?php
+	if ($context->getLocale() == 'en_US' && $documentPart->image_en_us) $image = $documentPart->image_en_us;
+	elseif ($context->getLocale() == 'fr_FR' && $documentPart->image_fr_fr) $image = $documentPart->image_fr_fr;
+	else $image = $documentPart->image;
+	?>
+	<?php if ($image) : ?>
 						<div align="center">
 							<img 
-							<?php foreach ($documentPart->image as $attr => $value) : ?>
+							<?php foreach ($image as $attr => $value) : ?>
 								<?php if ($attr == 'src') : ?>
 								src="<?php echo $this->basePath($value) ?>"
 								<?php else : ?>
@@ -29,7 +34,12 @@ echo $this->partial('/partials/header');
 						</div>
 	<?php endif;?>
 			
-						<div><?php echo $documentPart->content ?></div>
+	<?php
+	if ($context->getLocale() == 'en_US' && $documentPart->content_en_us) $content = $documentPart->content_en_us;
+	elseif ($context->getLocale() == 'fr_FR' && $documentPart->content_fr_fr) $content = $documentPart->content_fr_fr;
+	else $content = $documentPart->content;
+	?>
+						<div><?php echo $content ?></div>
 <?php endfor;?>
 					</div>
 </div>

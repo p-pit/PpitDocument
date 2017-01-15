@@ -26,6 +26,9 @@ class Document implements InputFilterAwareInterface
     public $first_part_id;
     public $mime;
     public $url;
+ 	public $properties = array();
+    public $properties_en_us = array();
+    public $properties_fr_fr = array();
     public $update_time;
     
     // Transient properties
@@ -37,7 +40,6 @@ class Document implements InputFilterAwareInterface
     public $destinationPath;
     
     // Deprecated
-    public $properties = array();
     public $community_id;
 
     protected $inputFilter;
@@ -64,11 +66,13 @@ class Document implements InputFilterAwareInterface
         $this->first_part_id = (isset($data['first_part_id'])) ? $data['first_part_id'] : null;
         $this->mime = (isset($data['mime'])) ? $data['mime'] : null;
         $this->url = (isset($data['url'])) ? $data['url'] : null;
+        $this->properties = (isset($data['properties'])) ? json_decode($data['properties'], true) : null;
+        $this->properties_en_us = (isset($data['properties_en_us'])) ? json_decode($data['properties_en_us'], true) : null;
+        $this->properties_fr_fr = (isset($data['properties_fr_fr'])) ? json_decode($data['properties_fr_fr'], true) : null;
         $this->update_time = (isset($data['update_time'])) ? $data['update_time'] : null;
 
 	    // Deprecated
         $this->community_id = (isset($data['community_id'])) ? $data['community_id'] : null;
-        $this->properties = (isset($data['properties'])) ? json_decode($data['properties'], true) : null;
     }
 
     public function toArray()
@@ -86,6 +90,8 @@ class Document implements InputFilterAwareInterface
     	$data['first_part_id'] = (int) $this->first_part_id;
     	$data['mime'] = $this->mime;
     	$data['url'] = $this->url;
+    	$data['properties_en_us'] = json_encode($this->properties_en_us);
+    	$data['properties_fr_fr'] = json_encode($this->properties_fr_fr);
     	return $data;
 
 	    // Deprecated
