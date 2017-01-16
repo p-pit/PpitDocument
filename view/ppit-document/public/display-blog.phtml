@@ -1,3 +1,11 @@
+<style>
+.blog-content {
+	color: #1a1a1a;
+	font-family: Merriweather, Georgia, serif;
+	font-size: 18px;
+	line-height: 1.75;
+}</style>
+
 <?php
 if ($context->getLocale() == 'en_US' && $document->properties_en_us) $properties = $document->properties_en_us;
 elseif ($context->getLocale() == 'fr_FR' && $document->properties_fr_fr) $properties = $document->properties_fr_fr;
@@ -17,13 +25,14 @@ echo $this->partial('/partials/header');
        			<div id="front_product_1">
 
 <?php foreach ($entryList as $entryId => $entry) : ?>
-	<?php if ($entryId == $name) : ?>
 
-		<?php
-		if ($context->getLocale() == 'en_US' && $entry->properties_en_us) $properties = $entry->properties_en_us;
-		elseif ($context->getLocale() == 'fr_FR' && $entry->properties_fr_fr) $properties = $entry->properties_fr_fr;
-		else $properties = $entry->properties;
-		?>
+	<?php
+	if ($context->getLocale() == 'en_US' && $entry->properties_en_us) $properties = $entry->properties_en_us;
+	elseif ($context->getLocale() == 'fr_FR' && $entry->properties_fr_fr) $properties = $entry->properties_fr_fr;
+	else $properties = $entry->properties;
+	?>
+
+	<?php if ($entryId == $name) : ?>
 
 <!-- Display the document -->
                 <h1 style="font-size: 150%; font-width: bold"><?php if (array_key_exists('date',$properties)) echo $context->decodeDate($entry->properties['date']).': ' ?><?php echo $properties['title'] ?></h1>
@@ -64,7 +73,7 @@ echo $this->partial('/partials/header');
 			elseif ($context->getLocale() == 'fr_FR' && $documentPart->content_fr_fr) $content = $documentPart->content_fr_fr;
 			else $content = $documentPart->content;
 			?>
-						<div><?php echo $content ?></div>
+						<div class="blog-content"><?php echo $content ?></div>
 					</div>
 		<?php endfor;?>
 	<?php else : ?>
