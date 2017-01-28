@@ -367,6 +367,7 @@ class Document implements InputFilterAwareInterface
 
 	public function saveFile($compress = false, $dropbox = null) {
 		$context = Context::getCurrent();
+		$config = $context->getConfig();
 		foreach ($this->files as $file) {
 			if ($file['size'] > $context->getConfig()['ppitCoreSettings']['maxUploadSize']) $error = 'Size';
 			else {
@@ -391,7 +392,7 @@ class Document implements InputFilterAwareInterface
 		
 				if ($this->destinationPath || $this->id) { // $link->id is 0 in demo mode
 					// Create the file on the file system with $id as a name
-					if ($context->getInstanceId() != 0) $adapter->addFilter('Rename', ($this->destinationPath) ? $this->destinationPath : 'data/documents/'.$this->id);
+					if ($config['isDemoAccountUpdatable'] || $context->getInstanceId() != 0) $adapter->addFilter('Rename', ($this->destinationPath) ? $this->destinationPath : 'data/documents/'.$this->id);
 					if ($this->destinationPath && file_exists($this->destinationPath)) unlink($this->destinationPath);
 					if ($adapter->receive($file['name'])) {
 
