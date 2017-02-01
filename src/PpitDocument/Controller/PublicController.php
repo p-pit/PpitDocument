@@ -135,12 +135,15 @@ class PublicController extends AbstractActionController
 
 		$documents['legalNotices'] = Document::getWithPath('home/public/'.$homeSpecs['legalNotices']['directory'].'/'.$homeSpecs['legalNotices']['name']);
 		$documents['legalNotices']->retrieveContent();
+		
+		$locale = (array_key_exists($context->getLocale(), $homeSpecs['description']) ? $context->getLocale() : 'en_US');
 
     	return new ViewModel(array(
     			'context' => $context,
     			'config' => $context->getConfig(),
     			'fqdn' => $fqdn,
-				'description' => $homeSpecs['description'][$context->getLocale()],
+    			'locale' => $locale,
+				'description' => $homeSpecs['description'][$locale],
     			'homeSpecs' => $homeSpecs,
     			'documents' => $documents,
     			'robots' => 'index, follow',

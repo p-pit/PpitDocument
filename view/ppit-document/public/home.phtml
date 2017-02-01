@@ -1,5 +1,5 @@
 <?php
-$title = $homeSpecs['title'][$context->getLocale()];
+$title = $homeSpecs['title'][$locale];
 $this->headTitle($title);
 echo $this->partial('/partials/header');
 ?>
@@ -124,7 +124,7 @@ echo $this->partial('/partials/header');
 		<span class="glyphicon glyphicon-<?php echo $menuItem['glyphicon'] ?>"></span>&nbsp;
 		<?php endif;?>
 		<?php if (isset($menuItem['text'])) : ?>
-		<?php echo $menuItem['text'][$context->getLocale()] ?>
+		<?php echo $menuItem['text'][$locale] ?>
 		<?php endif;?>
 	</button>
 	&nbsp;&nbsp;
