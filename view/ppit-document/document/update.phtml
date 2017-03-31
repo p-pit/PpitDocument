@@ -1,16 +1,8 @@
 <?php 
-$spa = true;
-$anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
+$anchorStyle = 'classic';
 ?>
-
-<!-- Display header on MPA mode -->
-<?php if (!$spa) : ?>
-	<?php 
-		echo $this->partial('/partials/menu'); 
-	?>
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
-<?php endif;?>
 
     <div class="panel panel-default">
             <div class="panel-heading">
@@ -22,7 +14,7 @@ $anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
 							'title' => $this->translate('Return to list', 'ppit-core', $context->getLocale()),
 							'id' => 'remove-anchor',
 							'anchorStyle' => $anchorStyle,
-							'spa' => $spa,
+							'spa' => true,
 					)) ?>
  				</div>
 			</div>
@@ -41,7 +33,7 @@ $anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
 									'title' => $this->translate('Print', 'ppit-core', $context->getLocale()),
 									'id' => 'print-anchor',
 									'anchorStyle' => $context->getAnchorStyle(),
-									'spa' => $spa,
+									'spa' => true,
 							)) ?>
 
 <?php elseif ($document->type == 'uploaded') : ?>
@@ -51,7 +43,7 @@ $anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
 									'title' => $this->translate('Download a file', 'ppit-core', $context->getLocale()),
 									'id' => 'uploaded-anchor',
 									'anchorStyle' => $context->getAnchorStyle(),
-									'spa' => $spa,
+									'spa' => true,
 							)) ?>
 <?php endif;?>
 
@@ -63,7 +55,7 @@ $anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
 									'title' => $this->translate('Update', 'ppit-core', $context->getLocale()),
 									'id' => 'acl-anchor',
 									'anchorStyle' => $context->getAnchorStyle(),
-									'spa' => $spa,
+									'spa' => true,
 							)) ?>
 <?php endif;?>
 
@@ -75,7 +67,7 @@ $anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
 									'title' => $this->translate('Delete', 'ppit-core', $context->getLocale()),
 									'id' => 'delete-anchor',
 									'anchorStyle' => $context->getAnchorStyle(),
-									'spa' => $spa,
+									'spa' => true,
 									'disabled' => !$document->isDeletable(),
 							)) ?>
 <?php endif;?>
@@ -141,10 +133,6 @@ $anchorStyle = ($spa) ? $context->getAnchorStyle() : 'classic';
 <?php endif;?>
 			</div>
 		</div>
-<?php if (!$spa) : ?>
-	</div>
-</div>
-<?php endif;?>
 
 <script id='document_update_script'>
 

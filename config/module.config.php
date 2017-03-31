@@ -21,7 +21,16 @@ return array(
                 ),
             	'may_terminate' => true,
             		'child_routes' => array(
-	        				'index' => array(
+	        				'home' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/home',
+	        								'defaults' => array(
+	        										'action' => 'home',
+	        								),
+	        						),
+	        				),
+            				'index' => array(
 	        						'type' => 'segment',
 	        						'options' => array(
 	        								'route' => '/index[/:parent_id]',
@@ -282,6 +291,7 @@ return array(
 		'guards' => array(
 			'BjyAuthorize\Guard\Route' => array(
 				array('route' => 'document', 'roles' => array('user')),
+				array('route' => 'document/home', 'roles' => array('user')),
 				array('route' => 'document/index', 'roles' => array('user')),
 				array('route' => 'document/search', 'roles' => array('user')),
 				array('route' => 'document/export', 'roles' => array('user')),
@@ -352,5 +362,88 @@ return array(
 	),
 	'document/index' => array(
 			'title' => array('en_US' => 'P-PIT Document', 'fr_FR' => 'P-PIT Document'),
+	),
+	'document/home' => array(
+			'title' => array(
+					'fr_FR' => 'P-Pit Systèmes d\'informations Plug & Play',
+					'en_US' => 'P-Pit Plug & Play IT',
+			),
+			'description' => array(
+					'en_US' => 'P-PIT challenges in June 2016 and presents P-PIT Engagements at Hacktion Innocherche Challenge',
+					'fr_FR' => 'Proposez et recevez des services en ligne tout en conservant vos applications existantes : P-Pit Engagements dématérialise bons de commandes et factures, P-Pit Studies la suite complète Sport-études.',
+			),
+			'contactUs' => array(
+					array(
+							'title' => array('fr_FR' => 'Nous contacter'),
+							'glyphicon' => 'earphone',
+							'href' => 'tel:+33629879002',
+							'text' => array('fr_FR' => '+33 629 879 002'),
+					),
+					array(
+							'title' => array('fr_FR' => 'Nous contacter'),
+							'glyphicon' => 'send',
+							'href' => 'mailto:contact@p-pit.fr',
+							'text' => array('fr_FR' => 'Envoyer un email'),
+					),
+			),
+			'jumbotron' => array(
+					'directory' => 'news',
+					'name' => 'p-pit-hacktion-innocherche-2016',
+			),
+			'frontProducts' => array(
+					array(
+						'directory' => 'product',
+						'name' => 'p-pit-studies',
+					),
+					array(
+						'directory' => 'product',
+						'name' => 'p-pit-engagements',
+					),
+			),
+			'legalNotices' => array(
+					'directory' => 'resources',
+					'name' => 'informations-legales',
+			),
+	),
+
+	'menus' => array(
+			'p-pit-hr-portal' => array(
+					'news' => array(
+							'route' => 'home',
+							'params' => array(),
+							'glyphicon' => 'glyphicon-info-sign',
+							'label' => array(
+									'en_US' => 'News',
+									'fr_FR' => 'Informations',
+							),
+					),
+					'employeeFile' => array(
+							'route' => 'student/studentHome',
+							'params' => array(),
+							'glyphicon' => 'glyphicon-user',
+							'label' => array(
+									'en_US' => 'Employee file',
+									'fr_FR' => 'Dossier employé',
+							),
+					),
+					'request' => array(
+							'route' => 'home',
+							'params' => array(),
+							'glyphicon' => 'glyphicon-question-sign',
+							'label' => array(
+									'en_US' => 'Requests',
+									'fr_FR' => 'Demandes',
+							),
+					),
+					'directory' => array(
+							'route' => 'home',
+							'params' => array(),
+							'glyphicon' => 'glyphicon-book',
+							'label' => array(
+									'en_US' => 'Directory',
+									'fr_FR' => 'Annuaire',
+							),
+					),
+			),
 	),
 );

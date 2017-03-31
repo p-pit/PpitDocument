@@ -5,6 +5,8 @@ use DOMPDFModule\View\Model\PdfModel;
 use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Context;
 use PpitCore\Model\Csrf;
+use PpitCore\Model\Place;
+use PpitCore\Model\Template;
 use PpitCore\Model\Token;
 use PpitCore\Model\Vcard;
 use PpitDocument\Model\Document;
@@ -17,18 +19,54 @@ use Zend\View\Model\ViewModel;
 
 class DocumentController extends AbstractActionController
 {
+    public function homeAction()
+    {
+    	$context = Context::getCurrent();
+    	$place = Place::get($context->getPlaceId());
+    	$template = Template::get('home', 'identifier');
+    	$request = $this->getRequest();
+    	$fqdn = $request->getUri()->getHost();
+
+		$homeSpecs = $context->getconfig('document/home');
+		$documents = array();
+
+		$documents['jumbotron'] = Document::getWithPath('home/public/'.$homeSpecs['jumbotron']['directory'].'/'.$homeSpecs['jumbotron']['name']);
+		$documents['jumbotron']->retrieveContent();
+		
+		$documents['frontProducts'] = array();
+		foreach ($homeSpecs['frontProducts'] as $frontProductId => $frontProduct) {
+			$documents['frontProducts'][$frontProductId] = Document::getWithPath('home/public/'.$homeSpecs['frontProducts'][$frontProductId]['directory'].'/'.$homeSpecs['frontProducts'][$frontProductId]['name']);
+			$documents['frontProducts'][$frontProductId]->retrieveContent();
+		}
+
+		$documents['legalNotices'] = Document::getWithPath('home/public/'.$homeSpecs['legalNotices']['directory'].'/'.$homeSpecs['legalNotices']['name']);
+		$documents['legalNotices']->retrieveContent();
+		
+		$locale = (array_key_exists($context->getLocale(), $homeSpecs['description']) ? $context->getLocale() : 'en_US');
+
+    	return new ViewModel(array(
+    			'context' => $context,
+    			'config' => $context->getConfig(),
+    			'place' => $place,
+    			'template' => $template,
+    			'fqdn' => $fqdn,
+    			'locale' => $locale,
+				'description' => $homeSpecs['description'][$locale],
+    			'homeSpecs' => $homeSpecs,
+    			'documents' => $documents,
+    			'robots' => 'index, follow',
+    			'homePage' => true,
+    	));
+    }
+	
 	public function indexAction()
 	{
 		$context = Context::getCurrent();
-		if (!$context->isAuthenticated()) $this->redirect()->toRoute('home');
-	
 		$parent_id = $this->params()->fromRoute('parent_id', null);
-		$menu = $context->getConfig('menu');
 	
 		return new ViewModel(array(
 				'context' => $context,
 				'config' => $context->getConfig(),
-				'menu' => $menu,
 				'parent_id' => $parent_id,
 		));
 	}
@@ -216,9 +254,15 @@ class DocumentController extends AbstractActionController
 			$csrfForm->setData($request->getPost());
 	
 			if ($csrfForm->isValid()) { // CSRF check
-				$document->loadDataFromRequest($request, $parent_id);
-				if ($document->type == 'directory') $document->save();
-				else $document->saveFile();
+				$data = array();
+				$data['parent_id'] = $parent_id;
+				$data['name'] = $request->getPost('name');
+				$data['directory'] = $request->getPost('directory');
+				$data['url'] = $request->getPost('url');
+				$rc = $document->loadData($data);
+				if ($return != 'OK') throw new \Exception('View error');
+				$document->save();
+				if ($document->type == 'uploaded') $document->saveFile($request->getFiles()->toArray());
 				$message = 'OK';
 			}
 		}
@@ -260,9 +304,15 @@ class DocumentController extends AbstractActionController
 			$csrfForm->setData($request->getPost());
 	
 			if ($csrfForm->isValid()) { // CSRF check
-				$document->loadDataFromRequest($request, $parent_id);
-				if ($document->type == 'directory') $document->save();
-				else $document->saveFile();
+				$data = array();
+				$data['parent_id'] = $parent_id;
+				$data['name'] = $request->getPost('name');
+				$data['directory'] = $request->getPost('directory');
+				$data['url'] = $request->getPost('url');
+				$rc = $document->loadData($data);
+				if ($return != 'OK') throw new \Exception('View error');
+				$document->save();
+				if ($document->type == 'uploaded') $document->saveFile($request->getFiles()->toArray());
 				$message = 'OK';
 			}
 		}
@@ -336,7 +386,7 @@ var_dump("part_to_update : ".$request->getPost('part_to_update'));
 var_dump("part_to_delete : ".$request->getPost('part_to_delete'));
 var_dump("part_to_move : ".$request->getPost('part_to_move'));
 var_dump("part_receiving : ".$request->getPost('part_receiving'));*/
-				$document->loadContentFromRequest($request);
+				$document->loadData($data);
 				
 				// Atomically save
 				try {
@@ -388,7 +438,9 @@ var_dump("part_receiving : ".$request->getPost('part_receiving'));*/
 			$csrfForm->setData($request->getPost());
 	
 			if ($csrfForm->isValid()) { // CSRF check
-				$documentPart->loadContentFromRequest($request);
+				$data = array();
+				$data['content'] = $request->getPost('editor_'.$this->id);
+				$documentPart->loadData($data);
 	
 				// Atomically save
 				try {
@@ -555,35 +607,35 @@ var_dump("part_receiving : ".$request->getPost('part_receiving'));*/
 			$csrfForm->setData($request->getPost());
 	
 			if ($csrfForm->isValid()) { // CSRF check
-    			$contact_id = $contact->loadData($request);
+    			$vcard_id = $contact->loadData($request);
 					
         		// Save the contact
 	        	Vcard::getTable()->save($contact);
 
     			Token::getNew(array(
 						array(
-							'contact_id' => $contact_id,
+							'vcard_id' => $vcard_id,
 							'authorized_route' => 'document/index',
 							'authorized_param' => 'parent_id',
 							'authorized_id' => $document->parent_id,
 							'validity' => null,
 						),
 						array(
-							'contact_id' => $contact_id,
+							'vcard_id' => $vcard_id,
 							'authorized_route' => 'document/display',
 							'authorized_param' => 'parent_id',
 							'authorized_id' => $document->parent_id,
 							'validity' => null,
 						),
 						array(
-							'contact_id' => $contact_id,
+							'vcard_id' => $vcard_id,
 							'authorized_route' => 'document/pdf',
 							'authorized_param' => 'parent_id',
 							'authorized_id' => $document->parent_id,
 							'validity' => null,
 						),
 						array(
-							'contact_id' => $contact_id,
+							'vcard_id' => $vcard_id,
 							'authorized_route' => 'document/approve',
 							'authorized_param' => 'id',
 							'authorized_id' => $id,
@@ -629,12 +681,18 @@ var_dump("part_receiving : ".$request->getPost('part_receiving'));*/
 			$csrfForm->setData($request->getPost());
 			 
 			if ($csrfForm->isValid()) { // CSRF check
-				$document->loadDataFromRequest($request);
-				// Atomically save
+				$data = array();
+				$data['parent_id'] = $parent_id;
+				$data['name'] = $request->getPost('name');
+				$data['directory'] = $request->getPost('directory');
+				$data['url'] = $request->getPost('url');
+				$rc = $document->loadData($data);
+				if ($return != 'OK') throw new \Exception('View error');
 				$connection = Document::getTable()->getAdapter()->getDriver()->getConnection();
 				$connection->beginTransaction();
 				try {
 					$document->save();
+					if ($document->type == 'uploaded') $document->saveFile($request->getFiles()->toArray());
 					$connection->commit();
 					$message = 'OK';
 				}
