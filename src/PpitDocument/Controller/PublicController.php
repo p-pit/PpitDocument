@@ -5,10 +5,10 @@ use DOMPDFModule\View\Model\PdfModel;
 use PpitCore\Form\CsrfForm;
 use PpitCore\Model\Context;
 use PpitCore\Model\Csrf;
-use PpitCore\Model\Token;
+use PpitCore\Model\Document;
+use PpitCore\Model\DocumentPart;
+use PpitCore\Model\Place;
 use PpitCore\Model\Vcard;
-use PpitDocument\Model\Document;
-use PpitDocument\Model\DocumentPart;
 use Zend\Http\Headers;
 use Zend\Http\Request;
 use Zend\Http\Response\Stream;
@@ -18,51 +18,29 @@ use Zend\Log\Formatter\FirePhp;
 
 class PublicController extends AbstractActionController
 {
-	public function displayContentAction() {
-	
-		// Retrieve the context
-		$context = Context::getCurrent();
-		$directory = $this->params()->fromRoute('directory', 0);
-		$name = $this->params()->fromRoute('name', 0);
-		$content = $context->getInstance()->specifications['ppitDocument']['pages'][$directory][$name];
-		
-		$document = Document::getWithPath('home/public/'.$directory.'/'.$name);
-		$document->retrieveContent();
-
-		$view = new ViewModel(array(
-				'context' => $context,
-				'config' => $context->getconfig(),
-				'directory' => $directory,
-				'name' => $name,
-				'content' => $content,
-				'document' => $document,
-				'description' => $document->properties['description'],
-		));
-		$view->setTerminal(true);
-		return $view;
-	}
-
 	public function displayPageAction() {
 		// Retrieve the context
 		$context = Context::getCurrent();
-
+		$place = Place::get($context->getPlaceId());
+		
 		$directory = $this->params()->fromRoute('directory', 0);
 		$name = $this->params()->fromRoute('name', 0);
 		$specifications = $context->getInstance()->specifications['ppitDocument']['pages'][$directory][$name];
 		
-		$document = Document::getWithPath('home/public/'.$directory.'/'.$name);
+		$document = Document::getWithPath('root/public/'.$directory.'/'.$name);
 		$document->retrieveContent();
 		$credentials = array();
 		if (array_key_exists('credentials', $specifications)) {
-			foreach ($specifications['credentials'] as $identifier => $unused) $credentials[$identifier] = Document::getWithPath('home/public/credentials/'.$identifier);
+			foreach ($specifications['credentials'] as $identifier => $unused) $credentials[$identifier] = Document::getWithPath('root/public/credentials/'.$identifier);
 		}
-
 		$request = $this->getRequest();
 		$fqdn = $request->getUri()->getHost();
 		
+//		$this->layout('/layout/public-layout');
 		$view = new ViewModel(array(
 				'context' => $context,
 				'config' => $context->getconfig(),
+				'place' => $place,
 				'fqdn' => $fqdn,
 				'directory' => $directory,
 				'name' => $name,
@@ -83,7 +61,7 @@ class PublicController extends AbstractActionController
 		$name = $this->params()->fromRoute('name', 0);
 		$content = $context->getInstance()->specifications['ppitDocument']['pages'][$directory][$name];
 	
-		$document = Document::getWithPath('home/public/'.$directory.'/'.$name);
+		$document = Document::getWithPath('root/public/'.$directory.'/'.$name);
 		$document->retrieveContent();
 		$credentials = array();
 		if (array_key_exists('credentials', $content)) {
@@ -93,7 +71,7 @@ class PublicController extends AbstractActionController
 		$entryList = array();
 		foreach ($context->getInstance()->specifications['ppitDocument']['pages'][$directory] as $entryId => $unused) {
 			if ($entryId == $name) $entryList[$entryId] = $document;
-			else $entryList[$entryId] = Document::getWithPath('home/public/blog/'.$entryId);
+			else $entryList[$entryId] = Document::getWithPath('root/public/blog/'.$entryId);
 		}
 		$request = $this->getRequest();
 		$fqdn = $request->getUri()->getHost();
@@ -117,6 +95,7 @@ class PublicController extends AbstractActionController
     public function homeAction()
     {
     	$context = Context::getCurrent();
+    	$place = Place::get($context->getPlaceId());
 
     	$request = $this->getRequest();
     	$fqdn = $request->getUri()->getHost();
@@ -124,23 +103,25 @@ class PublicController extends AbstractActionController
 		$homeSpecs = $context->getconfig('ppitDocument')['home'];
 		$documents = array();
 
-		$documents['jumbotron'] = Document::getWithPath('home/public/'.$homeSpecs['jumbotron']['directory'].'/'.$homeSpecs['jumbotron']['name']);
+		$documents['jumbotron'] = Document::getWithPath('root/public/'.$homeSpecs['jumbotron']['directory'].'/'.$homeSpecs['jumbotron']['name']);
 		$documents['jumbotron']->retrieveContent();
 		
 		$documents['frontProducts'] = array();
 		foreach ($homeSpecs['frontProducts'] as $frontProductId => $frontProduct) {
-			$documents['frontProducts'][$frontProductId] = Document::getWithPath('home/public/'.$homeSpecs['frontProducts'][$frontProductId]['directory'].'/'.$homeSpecs['frontProducts'][$frontProductId]['name']);
-			$documents['frontProducts'][$frontProductId]->retrieveContent();
+			$documents['frontProducts'][$frontProductId] = Document::getWithPath('root/public/'.$homeSpecs['frontProducts'][$frontProductId]['directory'].'/'.$homeSpecs['frontProducts'][$frontProductId]['name']);
+			if ($documents['frontProducts'][$frontProductId]) $documents['frontProducts'][$frontProductId]->retrieveContent();
 		}
-
-		$documents['legalNotices'] = Document::getWithPath('home/public/'.$homeSpecs['legalNotices']['directory'].'/'.$homeSpecs['legalNotices']['name']);
+		$documents['legalNotices'] = Document::getWithPath('root/public/'.$homeSpecs['legalNotices']['directory'].'/'.$homeSpecs['legalNotices']['name']);
 		$documents['legalNotices']->retrieveContent();
 		
 		$locale = (array_key_exists($context->getLocale(), $homeSpecs['description']) ? $context->getLocale() : 'en_US');
 
-    	return new ViewModel(array(
+		$this->layout('/layout/public-layout');
+		
+    	$view = new ViewModel(array(
     			'context' => $context,
     			'config' => $context->getConfig(),
+    			'place' => $place,
     			'fqdn' => $fqdn,
     			'locale' => $locale,
 				'description' => $homeSpecs['description'][$locale],
@@ -149,5 +130,6 @@ class PublicController extends AbstractActionController
     			'robots' => 'index, follow',
     			'homePage' => true,
     	));
+    	return $view;
     }
 }

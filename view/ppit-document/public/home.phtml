@@ -1,141 +1,137 @@
+<style>
+.view {
+    background: url("<?php echo $this->basePath('img/'.$context->getInstance()->caption.'/IMG_1149.jpg') ?>") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+</style>
+
+<!--Mask-->
+<div class="view hm-black-light">
+    <!--Intro content-->
+    <div class="full-bg-img flex-center">
+        <ul>
+            <li>
+                <h1 class="h1-responsive">SynApps by <em>P-Pit</em></h1></li>
+            <li>
+                <p>Explorez vos données</p>
+            </li>
+            <li>
+                <a href="#main" class="btn btn-default btn-lg">Learn more</a>
+                <a href="<?php echo $this->url('user/login') ?>" class="btn btn-primary btn-lg">Sign in</a>
+            </li>
+        </ul>
+    </div>
+    <!--/Intro content-->
+</div>
+<!--/.Mask-->
+
+<div class="container" id="main">
+<div>&nbsp;</div>
 <?php
 $title = $homeSpecs['title'][$locale];
 $this->headTitle($title);
 echo $this->partial('/partials/header');
 ?>
+
+<!--Main layout-->
+
 <div>&nbsp;</div>
-
-<!-- Jumbotron -->
-<div id="jumbotron" class="jumbotron">
-
-<!-- Display the document -->
 
 <?php for ($i = 0; $i < count($documents['jumbotron']->parts); $i++) : ?>
 	<?php $documentPart = $documents['jumbotron']->parts[$i]; ?>
-
-					<div id="document_part_panel_<?php echo $documentPart->id ?>">
-	
+        <!--First row-->
+        <div class="row">
+			<div class="col-md-7">
 	<?php
-	if ($context->getLocale() == 'en_US' && $documentPart->image_en_us) $image = $documentPart->image_en_us;
-	elseif ($context->getLocale() == 'fr_FR' && $documentPart->image_fr_fr) $image = $documentPart->image_fr_fr;
+	if ($context->getLocale() == $documents['jumbotron']->locale_1 && $documentPart->image_locale_1) $image = $documentPart->image_locale_1;
+	elseif ($context->getLocale() == $documents['jumbotron']->locale_2 && $documentPart->image_locale_2) $image = $documentPart->image_locale_2;
 	else $image = $documentPart->image;
 	?>
 	<?php if ($image) : ?>
-						<div align="center">
-							<img 
-							<?php foreach ($image as $attr => $value) : ?>
+			    <!--Featured image -->
+			    <div class="view overlay hm-white-light z-depth-1-half">
+			        <img
+					<?php foreach ($image as $attr => $value) : ?>
+						<?php if ($attr == 'src') : ?>
+						src="<?php echo $this->basePath($value) ?>"
+						<?php else : ?>
+						<?php echo $attr ?>="<?php echo $value ?>"
+						<?php endif;?>
+					<?php endforeach;?>
+ 					class="img-fluid " alt=""
+ 			        />
+			        <div class="mask">
+			        </div>
+			    </div>
+			</div>
+	<?php endif;?>
+
+	<?php
+	if ($context->getLocale() == $documents['jumbotron']->locale_1 && $documentPart->content_locale_1) $content = $documentPart->content_locale_1;
+	elseif ($context->getLocale() == $documents['jumbotron']->locale_2 && $documentPart->content_locale_2) $content = $documentPart->content_locale_2;
+	else $content = $documentPart->content;
+	?>
+            <!--Main information-->
+            <div class="col-md-5" id="document_part_panel_<?php echo $documentPart->id ?>">			
+				<div><?php echo $content ?></div>
+            </div>
+        </div>
+        <!--/.First row-->
+<?php endfor;?>
+
+		<hr>
+	
+	        <!--Second row-->
+	        <div class="row">
+
+<?php foreach ($homeSpecs['frontProducts'] as $frontProductId => $frontProduct) : ?>
+	<?php $document = $documents['frontProducts'][$frontProductId] ?>
+	            <div class="col-md-4">
+			        <!--Card-->
+			        <div class="card">
+			
+			            <!--Card image-->
+
+			                <img class="card-img-top view overlay hm-white-slight"
+							<?php foreach ($document->image as $attr => $value) : ?>
 								<?php if ($attr == 'src') : ?>
 								src="<?php echo $this->basePath($value) ?>"
 								<?php else : ?>
 								<?php echo $attr ?>="<?php echo $value ?>"
 								<?php endif;?>
 							<?php endforeach;?>
-							/>
-						</div>
-	<?php endif;?>
+							class="img-fluid"
+			                />
+			                <a href="<?php echo $this->url('public/displayPage', array('directory' => $frontProduct['directory'], 'name' => $frontProduct['name'])) ?>">
+			                    <div class="mask"></div>
+			                </a>
+
+			            <!--/.Card image-->
 			
-	<?php
-	if ($context->getLocale() == 'en_US' && $documentPart->content_en_us) $content = $documentPart->content_en_us;
-	elseif ($context->getLocale() == 'fr_FR' && $documentPart->content_fr_fr) $content = $documentPart->content_fr_fr;
-	else $content = $documentPart->content;
-	?>
-						<div><?php echo $content ?></div>
-<?php endfor;?>
-					</div>
-</div>
-
-<?php if (count($homeSpecs['frontProducts']) > 0) : ?>
-<!-- Front products -->
-<div class="row">
-
-    <div class="col-md-8 col-md-offset-2">
-        <div class="panel panel-default">
-
-			<div id="myCarousel" class="carousel slide" data-ride="carousel">
-				<!-- Indicators -->
-				<ol class="carousel-indicators">
-
-<?php $first = true; foreach ($homeSpecs['frontProducts'] as $frontProductId => $frontProduct) : ?>
-					<li data-target="#myCarousel" data-slide-to="<?php echo $frontProductId ?>" <?php if ($first) echo 'class="active"' ?>></li>
-<?php $first = false; endforeach; ?>
-
-				</ol>
+			            <!--Card content-->
+			            <div class="card-block">
+			                <!--Title-->
+			                <h4 class="card-title"><?php echo $document->properties['title'] ?></h4>
+			                <!--Text-->
+			                <p class="card-text"><?php echo $document->summary ?></p>
+			                <a href="<?php echo $this->url('public/displayPage', array('directory' => $frontProduct['directory'], 'name' => $frontProduct['name'])) ?>" class="btn btn-primary">Lire la suite...</a>
+			            </div>
+			            <!--/.Card content-->
 			
-			<!-- Wrapper for slides -->
-				<div class="carousel-inner" role="listbox">
+			        </div>
+			        <!--/.Card-->
+	            </div>
+<?php endforeach; ?>
 
-<?php $first = true; foreach ($homeSpecs['frontProducts'] as $frontProductId => $frontProduct) : ?>
-	<?php $document = $documents['frontProducts'][$frontProductId] ?>
-					<div class="item <?php if ($first) echo 'active' ?>">
-						<div class="panel-heading front-page">
-				        	<div><?php echo $document->properties['title'] ?></div>
-				        </div>
-				        <div class="panel-body">
-				    		<div id="front_product_<?php echo $frontProductId ?>">
-	
-	<?php if ($document->image) : ?>
-									<div align="center">
-										<img 
-										<?php foreach ($document->image as $attr => $value) : ?>
-											<?php if ($attr == 'src') : ?>
-											src="<?php echo $this->basePath($value) ?>"
-											<?php else : ?>
-											<?php echo $attr ?>="<?php echo $value ?>"
-											<?php endif;?>
-										<?php endforeach;?>
-										/>
-									</div>
-	<?php endif;?>
-			
-									<div><?php echo $document->summary ?></div>
-									<div style="text-align: center"><a href="<?php echo $this->url('public/displayPage', array('directory' => $frontProduct['directory'], 'name' => $frontProduct['name'])) ?>">Lire la suite...</a></div>
-							</div>
-				        </div>
-						<div class="panel-heading front-page"><br><br>
-				        </div>
-				    </div>
-<?php $first = false; endforeach; ?>
-
-				</div>
-
-				<!-- Left and right controls -->
-				<a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-					<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-					<span class="sr-only">Previous</span>
-				</a>
-				<a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-					<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-					<span class="sr-only">Next</span>
-				</a>
-			</div>
-        </div>
-    </div>
-</div>
 <div>&nbsp;</div>
-<?php endif;?>
-
-<!-- Contact us -->
-<div id="contact_us" style="text-align: center">
-	<a href="<?php echo $this->url('public/displayBlog', array('directory' => 'blog', 'name' => key($context->getConfig('ppitDocument')['pages']['blog']))) ?>">Blog</a>
-	&nbsp;&nbsp;
-<?php foreach ($homeSpecs['contactUs'] as $menuItem) : ?>
-	<button type="button" class="btn btn-default" title="<?php echo $menuItem['title'][$context->getLocale()] ?>" onClick="location_href('<?php echo $menuItem['href'] ?>')">
-		<?php if (isset($menuItem['glyphicon'])) : ?>
-		<span class="glyphicon glyphicon-<?php echo $menuItem['glyphicon'] ?>"></span>&nbsp;
-		<?php endif;?>
-		<?php if (isset($menuItem['text'])) : ?>
-		<?php echo $menuItem['text'][$locale] ?>
-		<?php endif;?>
-	</button>
-	&nbsp;&nbsp;
-<?php endforeach;?>
+<div style="text-align: center">
 <a href="https://twitter.com/ppitfr" class="twitter-follow-button" data-show-count="false">Follow @ppitfr</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>
-<div>&nbsp;</div>
-
+</div>
+</div>
 <script>
-
-function location_href(target) { document.location.href=target; }
-function location_hash(target) { document.location.hash=target; }
 
 <?php if ($fqdn == 'www.p-pit.fr') : ?>
 <!-- Google analytics -->

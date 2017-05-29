@@ -7,8 +7,8 @@
 }</style>
 
 <?php
-if ($context->getLocale() == 'en_US' && $document->properties_en_us) $properties = $document->properties_en_us;
-elseif ($context->getLocale() == 'fr_FR' && $document->properties_fr_fr) $properties = $document->properties_fr_fr;
+if ($context->getLocale() == $document->locale_1 && $document->properties_locale_1) $properties = $document->properties_locale_1;
+elseif ($context->getLocale() == $document->locale_2 && $document->properties_locale_2) $properties = $document->properties_locale_2;
 else $properties = $document->properties;
 $title = $properties['title'];
 $this->headTitle($title);
@@ -27,8 +27,8 @@ echo $this->partial('/partials/header');
 <?php foreach ($entryList as $entryId => $entry) : ?>
 
 	<?php
-	if ($context->getLocale() == 'en_US' && $entry->properties_en_us) $properties = $entry->properties_en_us;
-	elseif ($context->getLocale() == 'fr_FR' && $entry->properties_fr_fr) $properties = $entry->properties_fr_fr;
+	if ($context->getLocale() == $entry->locale_1 && $entry->properties_locale_1) $properties = $entry->properties_locale_1;
+	elseif ($context->getLocale() == $entry->locale_2 && $entry->properties_locale_2) $properties = $entry->properties_locale_2;
 	else $properties = $entry->properties;
 	?>
 
@@ -43,8 +43,8 @@ echo $this->partial('/partials/header');
 					<div id="document_part_panel_<?php echo $documentPart->id ?>">
 	
 			<?php
-			if ($context->getLocale() == 'en_US' && $documentPart->image_en_us) $image = $documentPart->image_en_us;
-			elseif ($context->getLocale() == 'fr_FR' && $documentPart->image_fr_fr) $image = $documentPart->image_fr_fr;
+			if ($context->getLocale() == $document->locale_1 && $documentPart->image_locale_1) $image = $documentPart->image_locale_1;
+			elseif ($context->getLocale() == $document_locale_2 && $documentPart->image_locale_2) $image = $documentPart->image_locale_2;
 			else $image = $documentPart->image;
 			?>
 			<?php if ($image) : ?>
@@ -69,8 +69,8 @@ echo $this->partial('/partials/header');
 			<?php endif;?>
 
 			<?php
-			if ($context->getLocale() == 'en_US' && $documentPart->content_en_us) $content = $documentPart->content_en_us;
-			elseif ($context->getLocale() == 'fr_FR' && $documentPart->content_fr_fr) $content = $documentPart->content_fr_fr;
+			if ($context->getLocale() == $document->locale_1 && $documentPart->content_locale_1) $content = $documentPart->content_locale_1;
+			elseif ($context->getLocale() == $document->locale_2 && $documentPart->content_locale_2) $content = $documentPart->content_locale_2;
 			else $content = $documentPart->content;
 			?>
 						<div class="blog-content"><?php echo $content ?></div>
@@ -152,7 +152,7 @@ function showForm(button, target) {
 	var xhttp = new XMLHttpRequest();
 	xhttp.open('GET', target, true);
 	xhttp.onreadystatechange = function() {
-		if (xhttp.readyState == 4 <?php if (!$config['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+		if (xhttp.readyState == 4 <?php if (!$config['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 			document.getElementById('form_action').innerHTML = xhttp.responseText;
 			$('#remove-anchor').click(function() { 
 				$('#form_action').hide(); 
@@ -229,7 +229,7 @@ function connectInstanceTryForm(product)
 			target = 'form_action';
 			xhttp.open('POST', route, true);
 			xhttp.onload = function () {
-				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['ppitCoreSettings']['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
+				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 					document.getElementById(target).innerHTML = xhttp.responseText;
 					$('#remove-anchor').click(function() { 
 						$('#form_action').hide(); 

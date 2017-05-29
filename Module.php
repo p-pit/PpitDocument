@@ -1,9 +1,6 @@
 <?php
 namespace PpitDocument;
 
-use PpitDocument\Model\Document;
-use PpitDocument\Model\DocumentPart;
-use PpitCore\Model\GenericTable;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
@@ -37,28 +34,6 @@ class Module
     {
         return array(
             'factories' => array(
-            	'PpitDocument\Model\DocumentTable' =>  function($sm) {
-                    $tableGateway = $sm->get('DocumentTableGateway');
-                    $table = new GenericTable($tableGateway);
-                    return $table;
-                },
-                'DocumentTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Document());
-                    return new TableGateway('document', $dbAdapter, null, $resultSetPrototype);
-                },
-            	'PpitDocument\Model\DocumentPartTable' =>  function($sm) {
-                    $tableGateway = $sm->get('DocumentPartTableGateway');
-                    $table = new GenericTable($tableGateway);
-                    return $table;
-                },
-                'DocumentPartTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new DocumentPart());
-                    return new TableGateway('document_part', $dbAdapter, null, $resultSetPrototype);
-                },
             ),
         );
     }
