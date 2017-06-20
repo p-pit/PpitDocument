@@ -25,14 +25,14 @@ class PublicController extends AbstractActionController
 		
 		$directory = $this->params()->fromRoute('directory', 0);
 		$name = $this->params()->fromRoute('name', 0);
-		$specifications = $context->getInstance()->specifications['ppitDocument']['pages'][$directory][$name];
+/*		$specifications = $context->getInstance()->specifications['ppitDocument']['pages'][$directory][$name];
 		
 		$document = Document::getWithPath('root/public/'.$directory.'/'.$name);
 		$document->retrieveContent();
 		$credentials = array();
 		if (array_key_exists('credentials', $specifications)) {
 			foreach ($specifications['credentials'] as $identifier => $unused) $credentials[$identifier] = Document::getWithPath('root/public/credentials/'.$identifier);
-		}
+		}*/
 		$request = $this->getRequest();
 		$fqdn = $request->getUri()->getHost();
 		
@@ -44,10 +44,10 @@ class PublicController extends AbstractActionController
 				'fqdn' => $fqdn,
 				'directory' => $directory,
 				'name' => $name,
-				'specifications' => $specifications,
+/*				'specifications' => $specifications,
 				'document' => $document,
 				'credentials' => $credentials,
-				'description' => $document->properties['description'],
+				'description' => $document->properties['description'],*/
     			'robots' => 'index, follow',
 		));
 		return $view;
@@ -99,23 +99,7 @@ class PublicController extends AbstractActionController
 
     	$request = $this->getRequest();
     	$fqdn = $request->getUri()->getHost();
-
-		$homeSpecs = $context->getconfig('ppitDocument')['home'];
-		$documents = array();
-
-		$documents['jumbotron'] = Document::getWithPath('root/public/'.$homeSpecs['jumbotron']['directory'].'/'.$homeSpecs['jumbotron']['name']);
-		$documents['jumbotron']->retrieveContent();
-		
-		$documents['frontProducts'] = array();
-		foreach ($homeSpecs['frontProducts'] as $frontProductId => $frontProduct) {
-			$documents['frontProducts'][$frontProductId] = Document::getWithPath('root/public/'.$homeSpecs['frontProducts'][$frontProductId]['directory'].'/'.$homeSpecs['frontProducts'][$frontProductId]['name']);
-			if ($documents['frontProducts'][$frontProductId]) $documents['frontProducts'][$frontProductId]->retrieveContent();
-		}
-		$documents['legalNotices'] = Document::getWithPath('root/public/'.$homeSpecs['legalNotices']['directory'].'/'.$homeSpecs['legalNotices']['name']);
-		$documents['legalNotices']->retrieveContent();
-		
-		$locale = (array_key_exists($context->getLocale(), $homeSpecs['description']) ? $context->getLocale() : 'en_US');
-
+		$description = (array_key_exists($context->getLocale(), $context->getConfig('public/home')['description'])) ? $context->getConfig('public/home')['description'][$context->getLocale()] : $context->getConfig('public/home')['description']['en_US'];
 		$this->layout('/layout/public-layout');
 		
     	$view = new ViewModel(array(
@@ -123,10 +107,7 @@ class PublicController extends AbstractActionController
     			'config' => $context->getConfig(),
     			'place' => $place,
     			'fqdn' => $fqdn,
-    			'locale' => $locale,
-				'description' => $homeSpecs['description'][$locale],
-    			'homeSpecs' => $homeSpecs,
-    			'documents' => $documents,
+				'description' => $description,
     			'robots' => 'index, follow',
     			'homePage' => true,
     	));

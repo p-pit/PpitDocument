@@ -1,8 +1,6 @@
 <?php
-if ($context->getLocale() == $document->locale_1 && $document->properties_locale_1) $properties = $document->properties_locale_1;
-elseif ($context->getLocale() == $document->locale_2 && $document->properties_locale_2) $properties = $document->properties_locale_2;
-else $properties = $document->properties;
-$title = $properties['title'];
+$specifications = $context->getConfig('public/page/'.$directory)[$name];
+$title = $context->localize($specifications['title']);
 $this->headTitle($title);
 echo $this->partial('/partials/header');
 ?>
@@ -14,54 +12,40 @@ echo $this->partial('/partials/header');
     <div class="col-md-8 col-md-offset-2">
         <div class="panel panel-default">
             <div class="panel-heading front-page">
-                <h1 id="front_product_1_title" style="font-size: 110%; margin-top: 10px;"><?php if (array_key_exists('date',$document->properties)) echo $context->decodeDate($document->properties['date']).': ' ?><?php echo $document->properties['title'] ?></h1>
+                <h1 id="front_product_1_title" style="font-size: 110%; margin-top: 10px;"><?php if (array_key_exists('date',$specifications)) echo $specifications['date'].': ' ?><?php echo $title ?></h1>
             </div>
             <div class="panel-body">
        			<div id="front_product_1">
 
 <!-- Display the document -->
 
-<?php for ($i = 0; $i < count($document->parts); $i++) : ?>
-	<?php $documentPart = $document->parts[$i]; ?>
-
-					<div id="document_part_panel_<?php echo $documentPart->id ?>">
-	
-	<?php
-	if ($context->getLocale() == $document->locale_1 && $documentPart->image_locale_1) $image = $documentPart->image_locale_1;
-	elseif ($context->getLocale() == $document->locale_2 && $documentPart->image_locale_2) $image = $documentPart->image_locale_2;
-	else $image = $documentPart->image;
-	?>
-	<?php if ($image) : ?>
-						<div align="center">
-		<?php if (array_key_exists('href', $image)) : ?>
-							<a href="<?php echo $image['href'] ?>" <?php if (array_key_exists('target', $image)) echo 'target="'.$image['target'].'"' ?>>
-		<?php endif;?>
-							<img 
-		<?php foreach ($image as $attr => $value) : ?>
-			<?php if ($attr == 'src') : ?>
-				<?php if (is_array($value)) $value = $value[rand(0, count($value)-1)]?>
-								src="<?php echo $this->basePath($value) ?>"
-			<?php elseif ($attr != 'href' && $attr != 'target') : ?>
-								<?php echo $attr ?>="<?php echo $value ?>"
-			<?php endif;?>
-		<?php endforeach;?>
-							/>
-		<?php if (array_key_exists('href', $image)) : ?>
-							</a>
-		<?php endif;?>
-						</div>
+<?php $image = $specifications['image'] ?>
+<?php if ($image) : ?>
+					<div align="center">
+	<?php if (array_key_exists('href', $image)) : ?>
+						<a href="<?php echo $image['href'] ?>" <?php if (array_key_exists('target', $image)) echo 'target="'.$image['target'].'"' ?>>
 	<?php endif;?>
-			
-	<?php
-	if ($context->getLocale() == $document->locale_1 && $documentPart->content_locale_1) $content = $documentPart->content_locale_1;
-	elseif ($context->getLocale() == $document->locale_2 && $documentPart->content_locale_2) $content = $documentPart->content_locale_2;
-	else $content = $documentPart->content;
-	?>
-						<div><?php echo $documentPart->content ?></div>
+						<img 
+	<?php foreach ($image as $attr => $value) : ?>
+		<?php if ($attr == 'src') : ?>
+				<?php if (is_array($value)) $value = $value[rand(0, count($value)-1)]?>
+							src="<?php echo $this->basePath($value) ?>"
+		<?php elseif ($attr != 'href' && $attr != 'target') : ?>
+							<?php echo $attr ?>="<?php echo $value ?>"
+		<?php endif;?>
+	<?php endforeach;?>
+						/>
+	<?php if (array_key_exists('href', $image)) : ?>
+						</a>
+	<?php endif;?>
 					</div>
-<?php endfor;?>
+<?php endif;?>
 
-<?php if (array_key_exists('actions', $specifications)) : ?>
+					<div><?php echo $context->localize($specifications['text']) ?></div>
+				</div>
+
+<?php if ($specifications['type'] == 'product') : ?>
+<!--  Products -->
 	<?php $first=true; foreach ($specifications['actions'] as $actionId => $action) : ?>
 		<?php if (!$first) : ?>
 					<div>&nbsp;</div>
@@ -82,36 +66,37 @@ echo $this->partial('/partials/header');
 						</button>
 					</div>
 	<?php $first=false; endforeach ?>
-<?php endif;?>
 
 					<div>&nbsp;</div>
 
-<?php foreach ($credentials as $identifier => $credential) : ?>
+	<?php foreach ($specifications['credentials'] as $credentialSpec) : ?>
+		<?php $credential = $context->getConfig('public/page/credential')[$credentialSpec['entry']] ?>
 					<hr>
 					<div>
-	<?php if ($credential->image) : ?>
+		<?php if ($credential['image']) : ?>
 						<div align="center">
-		<?php if (array_key_exists('href', $credential->image)) : ?>
-							<a href="<?php echo $credential->image['href'] ?>" <?php if (array_key_exists('target', $credential->image)) echo 'target="'.$credential->image['target'].'"' ?>>
-		<?php endif;?>
-							<img 
-		<?php foreach ($credential->image as $attr => $value) : ?>
-			<?php if ($attr == 'src') : ?>
-								src="<?php echo $this->basePath($value) ?>"
-			<?php elseif ($attr != 'href' && $attr != 'target') : ?>
-								<?php echo $attr ?>="<?php echo $value ?>"
+			<?php if (array_key_exists('href', $credential['image'])) : ?>
+							<a href="<?php echo $credential['image']['href'] ?>" <?php if (array_key_exists('target', $credential['image'])) echo 'target="'.$credential['image']['target'].'"' ?>>
 			<?php endif;?>
-		<?php endforeach;?>
+							<img 
+			<?php foreach ($credential['image'] as $attr => $value) : ?>
+				<?php if ($attr == 'src') : ?>
+								src="<?php echo $this->basePath($value) ?>"
+				<?php elseif ($attr != 'href' && $attr != 'target') : ?>
+								<?php echo $attr ?>="<?php echo $value ?>"
+				<?php endif;?>
+			<?php endforeach;?>
 							/>
-		<?php if (array_key_exists('href', $credential->image)) : ?>
+			<?php if (array_key_exists('href', $credential['image'])) : ?>
 							</a>
-		<?php endif;?>
+			<?php endif;?>
 						</div>
-	<?php endif;?>
+		<?php endif;?>
 					</div>
-					<div><?php echo $credential->summary ?></div>
-					<div style="text-align: center"><a href="<?php echo $this->url('public/displayPage', array('directory' => 'credentials', 'name' => $identifier)) ?>">Lire la suite</a></div>
-<?php endforeach;?>
+					<div><?php echo $context->localize($credential['summary']) ?></div>
+					<div style="text-align: center"><a href="<?php echo $this->url('public/displayPage', array('directory' => 'credential', 'name' => $credentialSpec['entry'])) ?>">Lire la suite</a></div>
+	<?php endforeach;?>
+<?php endif;?>
 					<div>&nbsp;</div>
 				</div>
 				<div>
@@ -155,7 +140,6 @@ echo $this->partial('/partials/header');
 .loader {
 	position : fixed;
 	z-index: 9999;
-//	background : url('<?php echo $this->basePath('/img/loading.gif') ?>') 50% 50% no-repeat;
 	background-color: rgba(118, 204, 243, 0.25);
 	top : 0px;
 	left : 0px;

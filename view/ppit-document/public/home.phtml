@@ -31,7 +31,7 @@
 <div class="container" id="main">
 <div>&nbsp;</div>
 <?php
-$title = $homeSpecs['title'][$locale];
+$title = $context->localize($context->getConfig('public/home')['title']);
 $this->headTitle($title);
 echo $this->partial('/partials/header');
 ?>
@@ -40,23 +40,24 @@ echo $this->partial('/partials/header');
 
 <div>&nbsp;</div>
 
-<?php for ($i = 0; $i < count($documents['jumbotron']->parts); $i++) : ?>
-	<?php $documentPart = $documents['jumbotron']->parts[$i]; ?>
+<?php 
+$directory = $context->getConfig('public/home')['rows']['jumbotron']['directory'];
+$entry = $context->getConfig('public/home')['rows']['jumbotron']['entry'];
+$jumbotron = $context->getConfig($directory)[$entry]
+?>
+<?php for ($i = 0; $i < count($jumbotron['parts']); $i++) : ?>
+	<?php $documentPart = $jumbotron['parts'][$i]; ?>
         <!--First row-->
         <div class="row">
 			<div class="col-md-7">
-	<?php
-	if ($context->getLocale() == $documents['jumbotron']->locale_1 && $documentPart->image_locale_1) $image = $documentPart->image_locale_1;
-	elseif ($context->getLocale() == $documents['jumbotron']->locale_2 && $documentPart->image_locale_2) $image = $documentPart->image_locale_2;
-	else $image = $documentPart->image;
-	?>
+	<?php $image = $documentPart['image'] ?>
 	<?php if ($image) : ?>
 			    <!--Featured image -->
 			    <div class="view overlay hm-white-light z-depth-1-half">
 			        <img
 					<?php foreach ($image as $attr => $value) : ?>
 						<?php if ($attr == 'src') : ?>
-						src="<?php echo $this->basePath($value) ?>"
+						src="<?php echo $this->basePath('img/'.$context->getInstance()->caption.'/'.$value) ?>"
 						<?php else : ?>
 						<?php echo $attr ?>="<?php echo $value ?>"
 						<?php endif;?>
@@ -69,14 +70,9 @@ echo $this->partial('/partials/header');
 			</div>
 	<?php endif;?>
 
-	<?php
-	if ($context->getLocale() == $documents['jumbotron']->locale_1 && $documentPart->content_locale_1) $content = $documentPart->content_locale_1;
-	elseif ($context->getLocale() == $documents['jumbotron']->locale_2 && $documentPart->content_locale_2) $content = $documentPart->content_locale_2;
-	else $content = $documentPart->content;
-	?>
             <!--Main information-->
-            <div class="col-md-5" id="document_part_panel_<?php echo $documentPart->id ?>">			
-				<div><?php echo $content ?></div>
+            <div class="col-md-5" id="document_part_panel_<?php echo $i ?>">			
+				<div><?php echo $context->localize($documentPart['text']) ?></div>
             </div>
         </div>
         <!--/.First row-->
@@ -87,8 +83,12 @@ echo $this->partial('/partials/header');
 	        <!--Second row-->
 	        <div class="row">
 
-<?php foreach ($homeSpecs['frontProducts'] as $frontProductId => $frontProduct) : ?>
-	<?php $document = $documents['frontProducts'][$frontProductId] ?>
+<?php foreach ($context->getConfig('public/home')['rows']['frontProducts']['cards'] as $frontProduct) : ?>
+	<?php 
+	$directory = $frontProduct['directory'];
+	$entry = $frontProduct['entry'];
+	$product = $context->getConfig('public/page/'.$directory)[$entry];
+	?>
 	            <div class="col-md-4">
 			        <!--Card-->
 			        <div class="card">
@@ -96,16 +96,16 @@ echo $this->partial('/partials/header');
 			            <!--Card image-->
 
 			                <img class="card-img-top view overlay hm-white-slight"
-							<?php foreach ($document->image as $attr => $value) : ?>
+							<?php foreach ($product['summary-image'] as $attr => $value) : ?>
 								<?php if ($attr == 'src') : ?>
-								src="<?php echo $this->basePath($value) ?>"
+								src="<?php echo $this->basePath('img/'.$context->getInstance()->caption.'/'.$value) ?>"
 								<?php else : ?>
 								<?php echo $attr ?>="<?php echo $value ?>"
 								<?php endif;?>
 							<?php endforeach;?>
 							class="img-fluid"
 			                />
-			                <a href="<?php echo $this->url('public/displayPage', array('directory' => $frontProduct['directory'], 'name' => $frontProduct['name'])) ?>">
+			                <a href="<?php echo $this->url('public/displayPage', array('directory' => 'product', 'name' => $entry)) ?>">
 			                    <div class="mask"></div>
 			                </a>
 
@@ -114,10 +114,14 @@ echo $this->partial('/partials/header');
 			            <!--Card content-->
 			            <div class="card-block">
 			                <!--Title-->
-			                <h4 class="card-title"><?php echo $document->properties['title'] ?></h4>
+			                <h4 class="card-title"><?php echo $context->localize($product['title']) ?></h4>
 			                <!--Text-->
-			                <p class="card-text"><?php echo $document->summary ?></p>
-			                <a href="<?php echo $this->url('public/displayPage', array('directory' => $frontProduct['directory'], 'name' => $frontProduct['name'])) ?>" class="btn btn-primary">Lire la suite...</a>
+			                <p class="card-text"><?php echo $context->localize($product['summary']) ?></p>
+		<?php if ($entry == 'p-pit-learning') : ?>
+			                <a href="<?php echo $this->url('testResult/subscribe', array('test_session_id' => 1)) ?>" class="btn btn-primary">Tester en jouant...</a>
+		<?php else : ?>
+			                <a href="<?php echo $this->url('public/displayPage', array('directory' => 'product', 'name' => $entry)) ?>" class="btn btn-primary">Lire la suite...</a>
+		<?php endif;?>
 			            </div>
 			            <!--/.Card content-->
 			
