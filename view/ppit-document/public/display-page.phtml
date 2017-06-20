@@ -29,7 +29,7 @@ echo $this->partial('/partials/header');
 	<?php foreach ($image as $attr => $value) : ?>
 		<?php if ($attr == 'src') : ?>
 				<?php if (is_array($value)) $value = $value[rand(0, count($value)-1)]?>
-							src="<?php echo $this->basePath($value) ?>"
+							src="<?php echo $this->basePath('img/'.$context->getInstance()->caption.'/'.$value) ?>"
 		<?php elseif ($attr != 'href' && $attr != 'target') : ?>
 							<?php echo $attr ?>="<?php echo $value ?>"
 		<?php endif;?>
@@ -81,7 +81,7 @@ echo $this->partial('/partials/header');
 							<img 
 			<?php foreach ($credential['image'] as $attr => $value) : ?>
 				<?php if ($attr == 'src') : ?>
-								src="<?php echo $this->basePath($value) ?>"
+								src="<?php echo $this->basePath('img/'.$context->getInstance()->caption.'/'.$value) ?>"
 				<?php elseif ($attr != 'href' && $attr != 'target') : ?>
 								<?php echo $attr ?>="<?php echo $value ?>"
 				<?php endif;?>
@@ -98,7 +98,6 @@ echo $this->partial('/partials/header');
 	<?php endforeach;?>
 <?php endif;?>
 					<div>&nbsp;</div>
-				</div>
 				<div>
 					<a href="https://www.facebook.com/P-PIT-180839485646758/" target="_blank"><img src="<?php echo $this->basePath('/img/facebook.png') ?>" width="24" alt="P-Pit on Facebook" /></a>
 					<a href="https://www.linkedin.com/company/confiance-it?trk=biz-companies-cym" target="_blank"><img src="<?php echo $this->basePath('/img/linkedin.png') ?>" width="24" alt="P-Pit on Linkedin" /></a>
