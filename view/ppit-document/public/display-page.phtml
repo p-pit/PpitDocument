@@ -1,27 +1,24 @@
+<div class="container" id="main">
+<div>&nbsp;</div>
 <?php
 $specifications = $context->getConfig('public/page/'.$directory)[$name];
-$title = $context->localize($specifications['title']);
+$title = $context->localize($context->getConfig('public/home')['title']);
 $this->headTitle($title);
 echo $this->partial('/partials/header');
 ?>
-<section>
+
+<!--Main layout-->
+
 <div>&nbsp;</div>
 
-<!-- Front product 1 -->
-<div class="row">
-    <div class="col-md-8 col-md-offset-2">
-        <div class="panel panel-default">
-            <div class="panel-heading front-page">
-                <h1 id="front_product_1_title" style="font-size: 110%; margin-top: 10px;"><?php if (array_key_exists('date',$specifications)) echo $specifications['date'].': ' ?><?php echo $title ?></h1>
-            </div>
-            <div class="panel-body">
-       			<div id="front_product_1">
-
-<!-- Display the document -->
-
-<?php $image = $specifications['image'] ?>
-<?php if ($image) : ?>
-					<div align="center">
+        <!--First row-->
+        <div class="row">
+			<div class="col-md-4">
+<?php if (array_key_exists('image', $specifications)) : ?>
+	<?php $image = $specifications['image'] ?>
+	<?php if ($image) : ?>
+			    <!--Featured image -->
+			    <div class="view overlay hm-white-light z-depth-1-half">
 	<?php if (array_key_exists('href', $image)) : ?>
 						<a href="<?php echo $image['href'] ?>" <?php if (array_key_exists('target', $image)) echo 'target="'.$image['target'].'"' ?>>
 	<?php endif;?>
@@ -38,34 +35,71 @@ echo $this->partial('/partials/header');
 	<?php if (array_key_exists('href', $image)) : ?>
 						</a>
 	<?php endif;?>
+			        <div class="mask">
+			        </div>
+			    </div>
+<?php endif;?>
+			</div>
+	<?php endif;?>
+
+            <!--Main information-->
+            <div class="col-md-8">			
+				<div>
+					<h2 style="text-align: center"><?php echo $context->localize($specifications['title']) ?></h2>
+					<hr>
+<?php if (array_key_exists('actions', $specifications)) : ?>
+					<div class="row">
+	<?php $first=true; foreach ($specifications['actions'] as $actionId => $action) : ?>
+					  <div class="col-md-4">
+		<?php $href = $action['href'] ?>
+		<?php 
+		if ($href['type'] == 'url') $onclick = 'location_href(\''.$actionId.'\', \''.$href['value'].'\')';
+		elseif ($href['type'] == 'route') $onclick = 'showForm(\''.$actionId.'\', \''.$this->url($href['value'], $href['params'], $href['urlParams']).'\')';
+		elseif ($href['type'] == 'redirect') $onclick = 'location_href(\''.$actionId.'\', \''.$this->url($href['value'], $href['params']).$href['urlParams'].'\')';
+		?>
+			          	<a class="btn btn-primary" style="width: 100%" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="<?php echo $onclick ?>">
+		<?php if (isset($action['glyphicon'])) : ?>
+								<i class="fa <?php echo $action['glyphicon'] ?>" aria-hidden="true"></i>
+		<?php endif;?>
+								<?php echo $action['labels'][$context->getLocale()] ?>
+						</a>
+					  </div>
+	<?php $first=false; endforeach ?>
 					</div>
 <?php endif;?>
-
-					<div><?php echo $context->localize($specifications['text']) ?></div>
+					
 				</div>
+            </div>
+        </div>
+        <!--/.First row-->
 
-<?php if ($specifications['type'] == 'product') : ?>
-<!--  Products -->
-	<?php $first=true; foreach ($specifications['actions'] as $actionId => $action) : ?>
-		<?php if (!$first) : ?>
-					<div>&nbsp;</div>
-		<?php endif;?>
-					<div style="text-align: center">
-		<?php $href = $action['href'] ?>
-		<?php if ($href['type'] == 'url') : ?> 
-						<button type="button" class="btn btn-success action-btn" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="location_href('<?php echo $actionId ?>', '<?php echo $href['value'] ?>')">
-		<?php elseif ($href['type'] == 'route') : ?>
-						<button type="button" class="btn btn-success action-btn" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="showForm('<?php echo $actionId ?>', '<?php echo $this->url($href['value'], $href['params'], $href['urlParams']) ?>')">
-		<?php elseif ($href['type'] == 'redirect') : ?>
-						<button type="button" class="btn btn-success action-btn" id="<?php echo $actionId ?>" title="<?php echo $action['labels'][$context->getLocale()] ?>" onClick="location_href('<?php echo $actionId ?>', '<?php echo $this->url($href['value'], $href['params']).$href['urlParams'] ?>')">
-		<?php endif;?>
-							<?php if (isset($action['glyphicon'])) : ?>
-							<span class="glyphicon glyphicon-<?php echo $action['glyphicon'] ?>"></span>
-							<?php endif;?>
-							<?php echo $action['labels'][$context->getLocale()] ?>
-						</button>
-					</div>
-	<?php $first=false; endforeach ?>
+		<hr>
+	
+	        <!--Second row-->
+	        <div class="row">
+
+	            <div class="col-md-12">
+			        <!--Card-->
+			        <div class="card">
+			
+			            <!--Card image-->
+
+			                <img class="card-img-top view overlay hm-white-slight"
+							class="img-fluid"
+			                />
+			                <a href="">
+			                    <div class="mask"></div>
+			                </a>
+
+			            <!--/.Card image-->
+			
+			            <!--Card content-->
+			            <div class="card-block">
+			                <!--Text-->
+			                <div class="card-text">
+			                	<?php echo $context->localize($specifications['text']) ?>
+
+<?php if (array_key_exists('credentials', $specifications)) : ?>
 
 					<div>&nbsp;</div>
 
@@ -73,13 +107,13 @@ echo $this->partial('/partials/header');
 		<?php $credential = $context->getConfig('public/page/credential')[$credentialSpec['entry']] ?>
 					<hr>
 					<div>
-		<?php if ($credential['image']) : ?>
+		<?php if (array_key_exists('summary-image', $credential)) : ?>
 						<div align="center">
-			<?php if (array_key_exists('href', $credential['image'])) : ?>
-							<a href="<?php echo $credential['image']['href'] ?>" <?php if (array_key_exists('target', $credential['image'])) echo 'target="'.$credential['image']['target'].'"' ?>>
+			<?php if (array_key_exists('href', $credential['summary-image'])) : ?>
+							<a href="<?php echo $credential['summary-image']['href'] ?>" <?php if (array_key_exists('target', $credential['image'])) echo 'target="'.$credential['summary-image']['target'].'"' ?>>
 			<?php endif;?>
 							<img 
-			<?php foreach ($credential['image'] as $attr => $value) : ?>
+			<?php foreach ($credential['summary-image'] as $attr => $value) : ?>
 				<?php if ($attr == 'src') : ?>
 								src="<?php echo $this->basePath('img/'.$context->getInstance()->caption.'/'.$value) ?>"
 				<?php elseif ($attr != 'href' && $attr != 'target') : ?>
@@ -87,7 +121,7 @@ echo $this->partial('/partials/header');
 				<?php endif;?>
 			<?php endforeach;?>
 							/>
-			<?php if (array_key_exists('href', $credential['image'])) : ?>
+			<?php if (array_key_exists('href', $credential['summary-image'])) : ?>
 							</a>
 			<?php endif;?>
 						</div>
@@ -97,43 +131,31 @@ echo $this->partial('/partials/header');
 					<div style="text-align: center"><a href="<?php echo $this->url('public/displayPage', array('directory' => 'credential', 'name' => $credentialSpec['entry'])) ?>">Lire la suite</a></div>
 	<?php endforeach;?>
 <?php endif;?>
-					<div>&nbsp;</div>
-				<div>
-					<a href="https://www.facebook.com/P-PIT-180839485646758/" target="_blank"><img src="<?php echo $this->basePath('/img/facebook.png') ?>" width="24" alt="P-Pit on Facebook" /></a>
-					<a href="https://www.linkedin.com/company/confiance-it?trk=biz-companies-cym" target="_blank"><img src="<?php echo $this->basePath('/img/linkedin.png') ?>" width="24" alt="P-Pit on Linkedin" /></a>
-					<a href="https://twitter.com/ppitfr" target="_blank"><img src="<?php echo $this->basePath('/img/twitter.png') ?>" width="24" alt="P-Pit on Twitter" /></a>
-					<a href="https://plus.google.com/u/1/+Confianceit/posts" target="_blank"><img src="<?php echo $this->basePath('/img/google.png') ?>" width="24" alt="P-Pit on Google" /></a>
-					<a href="mailto:?subject=<?php echo $title ?>&body=<?php echo $this->serverUrl(true) ?>" target="_blank"><img src="<?php echo $this->basePath('/img/email.png') ?>" width="24" alt="Share by email" /></a>
-<!--
-					<script>(function(d, s, id) {
-					  var js, fjs = d.getElementsByTagName(s)[0];
-					  if (d.getElementById(id)) return;
-					  js = d.createElement(s); js.id = id;
-					  js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.6";
-					  fjs.parentNode.insertBefore(js, fjs);
-					}(document, 'script', 'facebook-jssdk'));
-					</script>
-					<div class="fb-share-button" data-href="https://<?php echo $context->getInstance()->fqdn ?><?php echo $this->url('public/displayPage', array('directory' => $directory, 'name' => $name)) ?>" data-layout="box_count" data-mobile-iframe="true"></div>
+							</div>
+			            </div>
+			            <!--/.Card content-->
+			
+			        </div>
+			        <!--/.Card-->
+	            </div>
+	        </div>
 	
-					<script type="text/javascript" src="https://apis.google.com/js/plusone.js">
-					{lang: 'fr'}
-					</script>	
-					<span class="g-plusone" data-size="tall"></span>
-					
-					<script src="//platform.linkedin.com/in.js" type="text/javascript"> lang: fr_FR</script>
-					<script type="IN/Share" data-url="https://<?php echo $context->getInstance()->fqdn ?><?php echo $this->url('public/displayPage', array('directory' => $directory, 'name' => $name)) ?>" data-counter="top"></script>
-	
-					<a class="twitter-share-button" href="https://twitter.com/share" data-via="ppitfr">Tweet</a><script>// <![CDATA[
-					!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-					// ]]></script> -->
-				</div>	
-             </div>
-        </div>
-	</div>
+	        <!--Third row-->
+	        <div class="row">
+	            <div class="col-md-12">
+	            	<div>&nbsp;</div>
+					<div>
+						<a href="https://www.facebook.com/P-PIT-180839485646758/" target="_blank"><img src="<?php echo $this->basePath('/img/facebook.png') ?>" width="24" alt="P-Pit on Facebook" /></a>
+						<a href="https://www.linkedin.com/company/confiance-it?trk=biz-companies-cym" target="_blank"><img src="<?php echo $this->basePath('/img/linkedin.png') ?>" width="24" alt="P-Pit on Linkedin" /></a>
+						<a href="https://twitter.com/ppitfr" target="_blank"><img src="<?php echo $this->basePath('/img/twitter.png') ?>" width="24" alt="P-Pit on Twitter" /></a>
+						<a href="https://plus.google.com/u/1/+Confianceit/posts" target="_blank"><img src="<?php echo $this->basePath('/img/google.png') ?>" width="24" alt="P-Pit on Google" /></a>
+						<a href="mailto:?subject=<?php echo $title ?>&body=<?php echo $this->serverUrl(true) ?>" target="_blank"><img src="<?php echo $this->basePath('/img/email.png') ?>" width="24" alt="Share by email" /></a>
+					</div>
+				</div>
+			</div>
 
-    <div class="col-md-6 col-md-offset-3" id="form_action"></div>
+    <div class="col-md-6 offset-md-3" id="form_action"></div>
 </div>
-</section>
 
 <style>
 .loader {

@@ -21,22 +21,14 @@ class PublicController extends AbstractActionController
 	public function displayPageAction() {
 		// Retrieve the context
 		$context = Context::getCurrent();
-		$place = Place::get($context->getPlaceId());
+    	$place = Place::getTable()->transGet($context->getPlaceId());
 		
 		$directory = $this->params()->fromRoute('directory', 0);
 		$name = $this->params()->fromRoute('name', 0);
-/*		$specifications = $context->getInstance()->specifications['ppitDocument']['pages'][$directory][$name];
-		
-		$document = Document::getWithPath('root/public/'.$directory.'/'.$name);
-		$document->retrieveContent();
-		$credentials = array();
-		if (array_key_exists('credentials', $specifications)) {
-			foreach ($specifications['credentials'] as $identifier => $unused) $credentials[$identifier] = Document::getWithPath('root/public/credentials/'.$identifier);
-		}*/
 		$request = $this->getRequest();
 		$fqdn = $request->getUri()->getHost();
 		
-//		$this->layout('/layout/public-layout');
+		$this->layout('/layout/public-layout');
 		$view = new ViewModel(array(
 				'context' => $context,
 				'config' => $context->getconfig(),
@@ -44,10 +36,6 @@ class PublicController extends AbstractActionController
 				'fqdn' => $fqdn,
 				'directory' => $directory,
 				'name' => $name,
-/*				'specifications' => $specifications,
-				'document' => $document,
-				'credentials' => $credentials,
-				'description' => $document->properties['description'],*/
     			'robots' => 'index, follow',
 		));
 		return $view;
@@ -95,7 +83,7 @@ class PublicController extends AbstractActionController
     public function homeAction()
     {
     	$context = Context::getCurrent();
-    	$place = Place::get($context->getPlaceId());
+    	$place = Place::getTable()->transGet($context->getPlaceId());
 
     	$request = $this->getRequest();
     	$fqdn = $request->getUri()->getHost();
