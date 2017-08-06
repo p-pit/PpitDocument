@@ -30,6 +30,8 @@
 
 <div class="container" id="main">
 <div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
 <?php
 $title = $context->localize($context->getConfig('public/home')['title']);
 $this->headTitle($title);
@@ -129,12 +131,23 @@ $jumbotron = $context->getConfig($directory)[$entry]
 			        <!--/.Card-->
 	            </div>
 <?php endforeach; ?>
-
-<div>&nbsp;</div>
-<div style="text-align: center">
-<a href="https://twitter.com/ppitfr" class="twitter-follow-button" data-show-count="false">Follow @ppitfr</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script></div>
-</div>
-</div>
+			</div>
+	
+	        <!--Third row-->
+	        <div class="row">
+	            <div class="col-md-12">
+	            	<div>&nbsp;</div>
+					<div>
+						<a href="https://www.facebook.com/P-PIT-180839485646758/" target="_blank"><img src="<?php echo $this->basePath('/img/facebook.png') ?>" width="24" alt="P-Pit on Facebook" /></a>
+						<a href="https://www.linkedin.com/company/confiance-it?trk=biz-companies-cym" target="_blank"><img src="<?php echo $this->basePath('/img/linkedin.png') ?>" width="24" alt="P-Pit on Linkedin" /></a>
+						<a href="https://twitter.com/ppitfr" target="_blank"><img src="<?php echo $this->basePath('/img/twitter.png') ?>" width="24" alt="P-Pit on Twitter" /></a>
+						<a href="https://plus.google.com/u/1/+Confianceit/posts" target="_blank"><img src="<?php echo $this->basePath('/img/google.png') ?>" width="24" alt="P-Pit on Google" /></a>
+						<a href="mailto:?subject=<?php echo $title ?>&body=<?php echo $this->serverUrl(true) ?>" target="_blank"><img src="<?php echo $this->basePath('/img/email.png') ?>" width="24" alt="Share by email" /></a>
+					</div>
+				</div>
+			</div>
+		</div>
+		
 <script>
 
 <?php if ($fqdn == 'www.p-pit.fr') : ?>

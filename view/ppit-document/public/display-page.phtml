@@ -1,5 +1,7 @@
 <div class="container" id="main">
 <div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
 <?php
 $specifications = $context->getConfig('public/page/'.$directory)[$name];
 $title = $context->localize($context->getConfig('public/home')['title']);
@@ -191,9 +193,9 @@ function showForm(button, target) {
 	xhttp.onreadystatechange = function() {
 		if (xhttp.readyState == 4 <?php if (!$config['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 			document.getElementById('form_action').innerHTML = xhttp.responseText;
-			$('#remove-anchor').click(function() { 
+/*			$('#remove-anchor').click(function() { 
 				$('#form_action').hide(); 
-			});
+			});*/
 			connectInstanceTryForm('<?php echo $name ?>');
 			$('#caption').focus();
 		}
@@ -268,9 +270,9 @@ function connectInstanceTryForm(product)
 			xhttp.onload = function () {
 				if (xhttp.readyState == 4 <?php if (!$context->getConfig()['isTraceActive']) echo '&& xhttp.status == 200' ?>) {
 					document.getElementById(target).innerHTML = xhttp.responseText;
-					$('#remove-anchor').click(function() { 
+/*					$('#remove-anchor').click(function() { 
 						$('#form_action').hide(); 
-					});
+					});*/
 					connectInstanceTryForm();
 					$('#loader').removeClass('loader');
 				}

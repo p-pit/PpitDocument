@@ -33,6 +33,7 @@
     <!-- Your custom styles (optional) -->
     <link href="<?php echo $this->basePath('mdb-free/css/style.css" rel="stylesheet') ?>">
 
+	<link rel="stylesheet" href="<?php echo $this->basePath('/css/ppit-style.css') ?>">
 	<link rel="stylesheet" href="<?php echo $this->basePath('/jquery-ui-1.11.4/jquery-ui.css') ?>">
 	<link rel='stylesheet' href="<?php echo $this->basePath('/fullcalendar/fullcalendar.css') ?>" />
 	<link rel='stylesheet' href="<?php echo $this->basePath('/css/flipclock.css') ?>" />
@@ -61,7 +62,25 @@
 </head>
 
 <body>
-
+   
+	<header>
+		<!--Navbar-->
+		<nav class="navbar navbar-toggleable-md navbar-dark bg-primary fixed-top">
+		    <div class="container">
+		        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav1" aria-controls="navbarNav1" aria-expanded="false" aria-label="Toggle navigation">
+		            <span class="navbar-toggler-icon"></span>
+		        </button>
+		        <div class="collapse navbar-collapse" id="navbarNav1">
+		            <ul class="navbar-nav mr-auto">
+		                <li class="nav-item active">
+		                    <a class="nav-link" href="<?php echo $this->url('home') ?>">Home <span class="sr-only">(current)</span></a>
+		                </li>
+		            </ul>
+		        </div>
+		    </div>
+		</nav>
+	</header>
+	
 <?php echo $this->content; ?>
 	
 	<!--Footer-->
