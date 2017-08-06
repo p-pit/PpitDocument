@@ -21,9 +21,8 @@ class PublicController extends AbstractActionController
 	public function displayPageAction() {
 		// Retrieve the context
 		$context = Context::getCurrent();
-    	$place = Place::getTable()->transGet($context->getPlaceId());
-		
-		$directory = $this->params()->fromRoute('directory', 0);
+    	$place = Place::get($context->getPlaceId());
+    	$directory = $this->params()->fromRoute('directory', 0);
 		$name = $this->params()->fromRoute('name', 0);
 		$request = $this->getRequest();
 		$fqdn = $request->getUri()->getHost();
@@ -83,8 +82,8 @@ class PublicController extends AbstractActionController
     public function homeAction()
     {
     	$context = Context::getCurrent();
-    	$place = Place::getTable()->transGet($context->getPlaceId());
-
+    	$place = Place::get($context->getPlaceId());
+    	
     	$request = $this->getRequest();
     	$fqdn = $request->getUri()->getHost();
 		$description = (array_key_exists($context->getLocale(), $context->getConfig('public/home')['description'])) ? $context->getConfig('public/home')['description'][$context->getLocale()] : $context->getConfig('public/home')['description']['en_US'];
