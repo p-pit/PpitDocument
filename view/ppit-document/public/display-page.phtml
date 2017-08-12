@@ -1,8 +1,6 @@
 <div class="container" id="main">
 <div>&nbsp;</div>
-<div>&nbsp;</div>
-<div>&nbsp;</div>
-<?php
+	<?php
 $specifications = $context->getConfig('public/page/'.$directory)[$name];
 $title = $context->localize($context->getConfig('public/home')['title']);
 $this->headTitle($title);
@@ -15,7 +13,7 @@ echo $this->partial('/partials/header');
 
         <!--First row-->
         <div class="row">
-			<div class="col-md-4">
+			<div class="col-md-5">
 <?php if (array_key_exists('image', $specifications)) : ?>
 	<?php $image = $specifications['image'] ?>
 	<?php if ($image) : ?>
@@ -45,8 +43,8 @@ echo $this->partial('/partials/header');
 	<?php endif;?>
 
             <!--Main information-->
-            <div class="col-md-8">			
-				<div>
+            <div class="col-md-7">			
+				<div class="card-block" style="background-color: #FFFFFF; color: #686868">
 					<h2 style="text-align: center"><?php echo $context->localize($specifications['title']) ?></h2>
 					<hr>
 <?php if (array_key_exists('actions', $specifications)) : ?>

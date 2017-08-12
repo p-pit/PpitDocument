@@ -14,13 +14,16 @@
     <div class="full-bg-img flex-center">
         <ul>
             <li>
+                <h1 class="h1-responsive">Explorez vos données</em></h1></li>
+            <li>
+<!--            <li>
                 <h1 class="h1-responsive">SynApps by <em>P-Pit</em></h1></li>
             <li>
                 <p>Explorez vos données</p>
-            </li>
+            </li> -->
             <li>
-                <a href="#main" class="btn btn-default btn-lg">Learn more</a>
-                <a href="<?php echo $this->url('user/login') ?>" class="btn btn-primary btn-lg">Sign in</a>
+                <a href="#main" class="btn btn-default btn-lg">Découvrir</a>
+                <a href="<?php echo $this->url('user/login') ?>" class="btn btn-primary btn-lg">Se connecter</a>
             </li>
         </ul>
     </div>
@@ -29,8 +32,6 @@
 <!--/.Mask-->
 
 <div class="container" id="main">
-<div>&nbsp;</div>
-<div>&nbsp;</div>
 <div>&nbsp;</div>
 <?php
 $title = $context->localize($context->getConfig('public/home')['title']);
@@ -51,7 +52,7 @@ $jumbotron = $context->getConfig($directory)[$entry]
 	<?php $documentPart = $jumbotron['parts'][$i]; ?>
         <!--First row-->
         <div class="row">
-			<div class="col-md-7">
+			<div class="col-md-5">
 	<?php $image = $documentPart['image'] ?>
 	<?php if ($image) : ?>
 			    <!--Featured image -->
@@ -73,8 +74,8 @@ $jumbotron = $context->getConfig($directory)[$entry]
 	<?php endif;?>
 
             <!--Main information-->
-            <div class="col-md-5" id="document_part_panel_<?php echo $i ?>">			
-				<div><?php echo $context->localize($documentPart['text']) ?></div>
+            <div class="col-md-7" id="document_part_panel_<?php echo $i ?>">			
+				<div class="card-block" style="background-color: #FFFFFF; color: #686868"><?php echo $context->localize($documentPart['text']) ?></div>
             </div>
         </div>
         <!--/.First row-->
@@ -114,7 +115,7 @@ $jumbotron = $context->getConfig($directory)[$entry]
 			            <!--/.Card image-->
 			
 			            <!--Card content-->
-			            <div class="card-block">
+			            <div class="card-block" style="color: #686868">
 			                <!--Title-->
 			                <h4 class="card-title"><?php echo $context->localize($product['title']) ?></h4>
 			                <!--Text-->
