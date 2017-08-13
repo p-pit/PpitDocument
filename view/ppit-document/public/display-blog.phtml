@@ -44,7 +44,7 @@ echo $this->partial('/partials/header');
 	
 			<?php
 			if ($context->getLocale() == $document->locale_1 && $documentPart->image_locale_1) $image = $documentPart->image_locale_1;
-			elseif ($context->getLocale() == $document_locale_2 && $documentPart->image_locale_2) $image = $documentPart->image_locale_2;
+			elseif ($context->getLocale() == $document->locale_2 && $documentPart->image_locale_2) $image = $documentPart->image_locale_2;
 			else $image = $documentPart->image;
 			?>
 			<?php if ($image) : ?>

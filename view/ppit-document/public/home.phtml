@@ -120,11 +120,7 @@ $jumbotron = $context->getConfig($directory)[$entry]
 			                <h4 class="card-title"><?php echo $context->localize($product['title']) ?></h4>
 			                <!--Text-->
 			                <p class="card-text"><?php echo $context->localize($product['summary']) ?></p>
-		<?php if ($entry == 'p-pit-learning') : ?>
-			                <a href="<?php echo $this->url('testResult/subscribe', array('test_session_id' => 1)) ?>" class="btn btn-primary">Tester en jouant...</a>
-		<?php else : ?>
 			                <a href="<?php echo $this->url('public/displayPage', array('directory' => 'product', 'name' => $entry)) ?>" class="btn btn-primary">Lire la suite...</a>
-		<?php endif;?>
 			            </div>
 			            <!--/.Card content-->
 			
