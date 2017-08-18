@@ -55,6 +55,24 @@ return array(
 	        								),
 	        						),
 	        				),
+            				'communityHome' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/community-home',
+	        								'defaults' => array(
+	        										'action' => 'communityHome',
+	        								),
+	        						),
+	        				),
+            				'communityHomePrint' => array(
+	        						'type' => 'segment',
+	        						'options' => array(
+	        								'route' => '/community-home-print',
+	        								'defaults' => array(
+	        										'action' => 'communityHomePrint',
+	        								),
+	        						),
+	        				),
             		),
         	),
         ),
@@ -68,6 +86,8 @@ return array(
 				array('route' => 'public/displayPage', 'roles' => array('guest')),
 				array('route' => 'public/displayBlog', 'roles' => array('guest')),
 				array('route' => 'public/home', 'roles' => array('guest')),
+				array('route' => 'public/communityHome', 'roles' => array('guest')),
+				array('route' => 'public/communityHomePrint', 'roles' => array('guest')),
 			)
 		)
 	),

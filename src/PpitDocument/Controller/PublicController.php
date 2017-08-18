@@ -3,12 +3,14 @@ namespace PpitDocument\Controller;
 
 use DOMPDFModule\View\Model\PdfModel;
 use PpitCore\Form\CsrfForm;
+use PpitCore\Model\Community;
 use PpitCore\Model\Context;
 use PpitCore\Model\Csrf;
 use PpitCore\Model\Document;
 use PpitCore\Model\DocumentPart;
 use PpitCore\Model\Place;
 use PpitCore\Model\Vcard;
+use PpitCommitment\Model\Account;
 use Zend\Http\Headers;
 use Zend\Http\Request;
 use Zend\Http\Response\Stream;
@@ -26,6 +28,7 @@ class PublicController extends AbstractActionController
 		$name = $this->params()->fromRoute('name', 0);
 		$request = $this->getRequest();
 		$fqdn = $request->getUri()->getHost();
+		$template = $context->getConfig('public/page/'.$directory)[$name];
 		
 		$this->layout('/layout/public-layout');
 		$view = new ViewModel(array(
@@ -33,6 +36,7 @@ class PublicController extends AbstractActionController
 				'config' => $context->getconfig(),
 				'place' => $place,
 				'fqdn' => $fqdn,
+				'template' => $template,
 				'directory' => $directory,
 				'name' => $name,
     			'robots' => 'index, follow',
@@ -86,7 +90,7 @@ class PublicController extends AbstractActionController
     	
     	$request = $this->getRequest();
     	$fqdn = $request->getUri()->getHost();
-		$description = (array_key_exists($context->getLocale(), $context->getConfig('public/home')['description'])) ? $context->getConfig('public/home')['description'][$context->getLocale()] : $context->getConfig('public/home')['description']['en_US'];
+		$template = $context->getConfig('public/home');
 		$this->layout('/layout/public-layout');
 		
     	$view = new ViewModel(array(
@@ -94,10 +98,39 @@ class PublicController extends AbstractActionController
     			'config' => $context->getConfig(),
     			'place' => $place,
     			'fqdn' => $fqdn,
-				'description' => $description,
+    			'template' => $template,
     			'robots' => 'index, follow',
     			'homePage' => true,
     	));
     	return $view;
+    }
+	
+    public function communityHomeAction()
+    {
+    	$context = Context::getCurrent();
+    	$community = Community::get('STUD-CHO', 'identifier');
+    	$place = Place::get($community->place_id);
+    	 
+    	$request = $this->getRequest();
+    	$fqdn = $request->getUri()->getHost();
+		$template = $context->getConfig('public/community-home/student');
+		$this->layout('/layout/public-layout');
+		
+    	$view = new ViewModel(array(
+    			'context' => $context,
+    			'config' => $context->getConfig(),
+    			'place' => $place,
+    			'fqdn' => $fqdn,
+    			'template' => $template,
+    			'robots' => 'index, follow',
+    			'homePage' => true,
+		    	'account_id' => 9765,
+    	));
+    	return $view;
+    }
+	
+    public function communityHomePrintAction()
+    {
+    	return $this->communityHomeAction();
     }
 }

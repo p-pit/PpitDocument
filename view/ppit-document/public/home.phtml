@@ -34,7 +34,7 @@
 <div class="container" id="main">
 <div>&nbsp;</div>
 <?php
-$title = $context->localize($context->getConfig('public/home')['title']);
+$title = $context->localize($template['title']);
 $this->headTitle($title);
 echo $this->partial('/partials/header');
 ?>
@@ -44,8 +44,8 @@ echo $this->partial('/partials/header');
 <div>&nbsp;</div>
 
 <?php 
-$directory = $context->getConfig('public/home')['rows']['jumbotron']['directory'];
-$entry = $context->getConfig('public/home')['rows']['jumbotron']['entry'];
+$directory = $template['rows']['jumbotron']['directory'];
+$entry = $template['rows']['jumbotron']['entry'];
 $jumbotron = $context->getConfig($directory)[$entry]
 ?>
 <?php for ($i = 0; $i < count($jumbotron['parts']); $i++) : ?>
@@ -86,7 +86,7 @@ $jumbotron = $context->getConfig($directory)[$entry]
 	        <!--Second row-->
 	        <div class="row">
 
-<?php foreach ($context->getConfig('public/home')['rows']['frontProducts']['cards'] as $frontProduct) : ?>
+<?php foreach ($template['rows']['frontProducts']['cards'] as $frontProduct) : ?>
 	<?php 
 	$directory = $frontProduct['directory'];
 	$entry = $frontProduct['entry'];

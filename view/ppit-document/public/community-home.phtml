@@ -1,0 +1,94 @@
+
+<div class="container" id="main">
+<div>&nbsp;</div>
+<?php
+$title = $context->localize($template['title']);
+$this->headTitle($title);
+echo $this->partial('/partials/header');
+?>
+
+<!--Main layout-->
+
+<div>&nbsp;</div>
+
+<?php 
+$directory = $template['rows']['jumbotron']['directory'];
+$entry = $template['rows']['jumbotron']['entry'];
+$jumbotron = $context->getConfig($directory)[$entry]
+?>
+<?php for ($i = 0; $i < count($jumbotron['parts']); $i++) : ?>
+	<?php $documentPart = $jumbotron['parts'][$i]; ?>
+        <!--First row-->
+        <div class="row">
+			<div class="col-md-7">
+	<?php $image = $documentPart['image'] ?>
+	<?php if ($image) : ?>
+			    <!--Featured image -->
+			    <div class="view overlay hm-white-light z-depth-1-half">
+			        <img
+					<?php foreach ($image as $attr => $value) : ?>
+						<?php if ($attr == 'src') : ?>
+						src="<?php echo $this->basePath('img/'.$context->getInstance()->caption.'/'.$value) ?>"
+						<?php else : ?>
+						<?php echo $attr ?>="<?php echo $value ?>"
+						<?php endif;?>
+					<?php endforeach;?>
+ 					class="img-fluid " alt=""
+ 			        />
+			        <div class="mask">
+			        </div>
+			    </div>
+			</div>
+	<?php endif;?>
+
+            <!--Main information-->
+            <div class="col-md-5" id="document_part_panel_<?php echo $i ?>">			
+				<div class="card-block" style="background-color: #FFFFFF; color: #686868"><?php echo $context->localize($documentPart['text']) ?></div>
+            </div>
+        </div>
+        <!--/.First row-->
+<?php endfor;?>
+
+		<hr>
+	
+        <!--Third row-->
+		<div class="row">
+			<div class="col-md-12 card-block ppit-panel" style="background-color: #FFFFFF" id="main-panel"></div>
+		</div>
+		
+	
+        <!--Third row-->
+        <div class="row">
+            <div class="col-md-12">
+            	<div>&nbsp;</div>
+				<div>
+					<a href="https://www.facebook.com/P-PIT-180839485646758/" target="_blank"><img src="<?php echo $this->basePath('/img/facebook.png') ?>" width="24" alt="P-Pit on Facebook" /></a>
+					<a href="https://www.linkedin.com/company/confiance-it?trk=biz-companies-cym" target="_blank"><img src="<?php echo $this->basePath('/img/linkedin.png') ?>" width="24" alt="P-Pit on Linkedin" /></a>
+					<a href="https://twitter.com/ppitfr" target="_blank"><img src="<?php echo $this->basePath('/img/twitter.png') ?>" width="24" alt="P-Pit on Twitter" /></a>
+					<a href="https://plus.google.com/u/1/+Confianceit/posts" target="_blank"><img src="<?php echo $this->basePath('/img/google.png') ?>" width="24" alt="P-Pit on Google" /></a>
+					<a href="mailto:?subject=<?php echo $title ?>&body=<?php echo $this->serverUrl(true) ?>" target="_blank"><img src="<?php echo $this->basePath('/img/email.png') ?>" width="24" alt="Share by email" /></a>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+<script>
+
+<?php if ($fqdn == 'www.p-pit.fr') : ?>
+<!-- Google analytics -->
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-82264844-1', 'auto');
+ga('send', 'pageview');
+<?php endif;?>
+
+<?php
+echo $this->partial('/partials/student-home-scripts');
+?>
+
+activateStudentHome();
+
+</script>

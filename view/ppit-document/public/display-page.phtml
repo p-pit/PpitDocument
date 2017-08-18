@@ -1,7 +1,6 @@
 <div class="container" id="main">
 <div>&nbsp;</div>
 	<?php
-$specifications = $context->getConfig('public/page/'.$directory)[$name];
 $title = $context->localize($context->getConfig('public/home')['title']);
 $this->headTitle($title);
 echo $this->partial('/partials/header');
@@ -14,8 +13,8 @@ echo $this->partial('/partials/header');
         <!--First row-->
         <div class="row">
 			<div class="col-md-5">
-<?php if (array_key_exists('image', $specifications)) : ?>
-	<?php $image = $specifications['image'] ?>
+<?php if (array_key_exists('image', $template)) : ?>
+	<?php $image = $template['image'] ?>
 	<?php if ($image) : ?>
 			    <!--Featured image -->
 			    <div class="view overlay hm-white-light z-depth-1-half">
@@ -45,11 +44,11 @@ echo $this->partial('/partials/header');
             <!--Main information-->
             <div class="col-md-7">			
 				<div class="card-block" style="background-color: #FFFFFF; color: #686868">
-					<h2 style="text-align: center"><?php echo $context->localize($specifications['title']) ?></h2>
+					<h2 style="text-align: center"><?php echo $context->localize($template['title']) ?></h2>
 					<hr>
-<?php if (array_key_exists('actions', $specifications)) : ?>
+<?php if (array_key_exists('actions', $template)) : ?>
 					<div class="row">
-	<?php $first=true; foreach ($specifications['actions'] as $actionId => $action) : ?>
+	<?php $first=true; foreach ($template['actions'] as $actionId => $action) : ?>
 					  <div class="col-md-4">
 		<?php $href = $action['href'] ?>
 		<?php 
@@ -97,13 +96,13 @@ echo $this->partial('/partials/header');
 			            <div class="card-block" style="color: #686868">
 			                <!--Text-->
 			                <div class="card-text">
-			                	<?php echo $context->localize($specifications['text']) ?>
+			                	<?php echo $context->localize($template['text']) ?>
 
-<?php if (array_key_exists('credentials', $specifications)) : ?>
+<?php if (array_key_exists('credentials', $template)) : ?>
 
 					<div>&nbsp;</div>
 
-	<?php foreach ($specifications['credentials'] as $credentialSpec) : ?>
+	<?php foreach ($template['credentials'] as $credentialSpec) : ?>
 		<?php $credential = $context->getConfig('public/page/credential')[$credentialSpec['entry']] ?>
 					<hr>
 					<div>
