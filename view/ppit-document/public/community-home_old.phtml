@@ -53,23 +53,7 @@ $jumbotron = $context->getConfig($directory)[$entry]
 	
         <!--Second row-->
 		<div class="row">
-			<div class="col-md-12 card-block ppit-panel" style="background-color: #FFFFFF" id="main-panel">
-				
-				<ul class="nav nav-tabs">
-<?php $first = true; foreach ($template['rows']['tabs']['content'] as $tabId => $tab) : ?>		
-				  <li class="nav-item" id="<?php echo $tabId ?>-tab">
-				  	<a class="nav-link <?php if ($first) echo 'active' ?>" data-toggle="tab" href="#<?php echo $tabId ?>-panel" role="tab"><?php echo $tab['label'][$context->getLocale()] ?></a>
-				  </li>
-<?php $first = false; endforeach;?>
-				</ul>
-
-				<div class="tab-content card">
-<?php $first = true; foreach ($template['rows']['tabs']['content'] as $tabId => $tab) : ?>		
-					<div class="tab-pane fade <?php if ($first) echo 'in show active' ?>" id="<?php echo $tabId ?>-panel" role="tabpanel"></div>
-<?php $first = false; endforeach;?>
-				</div>
-
-			</div>
+			<div class="col-md-12 card-block ppit-panel" style="background-color: #FFFFFF" id="main-panel"></div>
 		</div>
 		
 	
@@ -102,15 +86,9 @@ ga('send', 'pageview');
 <?php endif;?>
 
 <?php
-echo $this->partial('/partials/home-scripts');
+echo $this->partial('/partials/student-home-scripts');
 ?>
 
-<?php foreach ($template['rows']['tabs']['content'] as $tabId => $tab) : ?>
-	<?php if ($tab['type'] == 'static') : ?>
-showStatic('<?php echo $this->url($tab['route'], array('id' => $subject_id)) ?>', '<?php echo $tabId ?>-panel');
-	<?php elseif ($tab['type'] == 'calendar') : ?>
-showCalendar('<?php echo $this->url($tab['route'], array('id' => $subject_id)) ?>', '<?php echo $tabId ?>-panel');
-	<?php endif;?>
-<?php endforeach;?>
+activateStudentHome();
 
 </script>

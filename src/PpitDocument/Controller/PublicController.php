@@ -108,9 +108,11 @@ class PublicController extends AbstractActionController
     public function communityHomeAction()
     {
     	$context = Context::getCurrent();
-    	$community = Community::get('STUD-CHO', 'identifier');
+    	$id = $this->params()->fromRoute('id');
+    	$community = Community::get($id);
     	$place = Place::get($community->place_id);
-    	 
+    	$subject_id = (int) $this->params()->fromRoute('subject_id');
+
     	$request = $this->getRequest();
     	$fqdn = $request->getUri()->getHost();
 		$template = $context->getConfig('public/community-home/student');
@@ -124,7 +126,7 @@ class PublicController extends AbstractActionController
     			'template' => $template,
     			'robots' => 'index, follow',
     			'homePage' => true,
-		    	'account_id' => 9765,
+		    	'subject_id' => $subject_id,
     	));
     	return $view;
     }

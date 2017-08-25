@@ -58,7 +58,11 @@ return array(
             				'communityHome' => array(
 	        						'type' => 'segment',
 	        						'options' => array(
-	        								'route' => '/community-home',
+	        								'route' => '/community-home[/:id][/:subject_id]',
+						                    'constraints' => array(
+						                    	'id' => '[0-9]*',
+						                    	'subject_id' => '[0-9]*',
+						                    ),
 	        								'defaults' => array(
 	        										'action' => 'communityHome',
 	        								),
